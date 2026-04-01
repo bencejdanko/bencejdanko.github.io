@@ -1,0 +1,265 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Yan Wu: Unix-style commands outperform a catalog of typed function calls. - Appendix | bence</title><!-- SEO --><meta name="description" content="Bence's personal site and blog."><link rel="canonical" href="https://bencejdanko.github.io/appendices/manus-lead/"><link rel="sitemap" href="/sitemap-index.xml"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://bencejdanko.github.io/appendices/manus-lead/"><meta property="og:title" content="Yan Wu: Unix-style commands outperform a catalog of typed function calls. - Appendix | bence"><meta property="og:description" content="Bence's personal site and blog."><!-- Twitter --><meta property="twitter:card" content="summary"><meta property="twitter:url" content="https://bencejdanko.github.io/appendices/manus-lead/"><meta property="twitter:title" content="Yan Wu: Unix-style commands outperform a catalog of typed function calls. - Appendix | bence"><meta property="twitter:description" content="Bence's personal site and blog."><link rel="stylesheet" href="/_astro/_slug_.j1XWFisD.css"></head> <body class="min-h-screen flex justify-center bg-white"> <main class="prose w-full py-10 max-w-2xl"> <nav class="not-prose mb-8 font-sans"> <ul class="flex gap-4 list-none p-0"> <li> <a href="/sitemap-0.xml" class="text-sm text-black no-underline border-b-2 border-transparent hover:border-black pb-0.5" aria-label="Sitemap"> <span class="icon-[mdi--sitemap] inline-block align-middle"></span> </a> </li> <li> <a href="/" class="text-sm text-black no-underline border-b-2 border-transparent hover:border-black pb-0.5"> home </a> </li><li> <a href="/projects" class="text-sm text-black no-underline border-b-2 border-transparent hover:border-black pb-0.5"> projects </a> </li><li> <a href="/glossary" class="text-sm text-black no-underline border-b-2 border-transparent hover:border-black pb-0.5"> glossary </a> </li><li> <a href="/photography" class="text-sm text-black no-underline border-b-2 border-transparent hover:border-black pb-0.5"> photography </a> </li> </ul> </nav>  <h1>Yan Wu: Unix-style commands outperform a catalog of typed function calls.</h1> <div data-callout="" data-callout-type="note">
+<div data-callout-title="">Note</div>
+<div data-callout-body="">
+<p><a href="https://old.reddit.com/r/LocalLLaMA/comments/1rrisqn/i_was_backend_lead_at_manus_after_building_agents/">The original source to this was a post on reddit</a>. A copy is here for preservation.</p>
+</div>
+</div>
+<p><em>Author: <a href="https://github.com/yan5xu">Yan Wu</a> (Manus). Originally posted March 9th.</em></p>
+<hr>
+<p>I was a backend lead at Manus before the Meta acquisition. I’ve spent the last 2 years building AI agents — first at Manus, then on my own open-source agent runtime (Pinix) and agent (agent-clip). Along the way I came to a conclusion that surprised me:</p>
+<blockquote>
+<p><strong>A single <code>run(command="...")</code> tool with Unix-style commands outperforms a catalog of typed function calls.</strong></p>
+</blockquote>
+<hr>
+<h2 id="why-unix">Why Unix</h2>
+<p>Unix made a design decision 50 years ago: everything is a text stream. Programs don’t exchange complex binary structures or share memory objects — they communicate through text pipes. Small tools each do one thing well, composed via <code>|</code> into powerful workflows. Programs describe themselves with <code>--help</code>, report success or failure with exit codes, and communicate errors through stderr.</p>
+<p>LLMs made an almost identical decision 50 years later: <strong>everything is tokens.</strong> They only understand text, only produce text. Their “thinking” is text, their “actions” are text, and the feedback they receive from the world must be text.</p>
+<p>These two decisions, made half a century apart from completely different starting points, converge on the same interface model. The text-based system Unix designed for human terminal operators — <code>cat</code>, <code>grep</code>, <code>pipe</code>, <code>exit codes</code>, <code>man pages</code> — isn’t just “usable” by LLMs. It’s a natural fit. When it comes to tool use, an LLM is essentially a terminal operator — one that’s faster than any human and has already seen vast amounts of shell commands and CLI patterns in its training data.</p>
+<p>This is the core philosophy of the nix Agent: <strong>don’t invent a new tool interface. Take what Unix has proven over 50 years and hand it directly to the LLM.</strong></p>
+<hr>
+<h2 id="why-a-single-run">Why a single run</h2>
+<h3 id="the-single-tool-hypothesis">The single-tool hypothesis</h3>
+<p>Most agent frameworks give LLMs a catalog of independent tools:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">tools</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">search_web</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">read_file</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">write_file</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">run_code</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">send_email</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">...</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<p>Before each call, the LLM must make a <strong>tool selection</strong> — which one? What parameters? The more tools you add, the harder the selection, and accuracy drops. Cognitive load is spent on “which tool?” instead of “what do I need to accomplish?”</p>
+<p>My approach: <strong>one run(command=”…”) tool, all capabilities exposed as CLI commands.</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#E1E4E8">run(</span><span style="color:#FFAB70">command</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"cat notes.md"</span><span style="color:#E1E4E8">) </span></span>
+<span class="line"><span style="color:#E1E4E8">run(</span><span style="color:#FFAB70">command</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"cat log.txt | grep ERROR | wc -l"</span><span style="color:#E1E4E8">) </span></span>
+<span class="line"><span style="color:#E1E4E8">run(</span><span style="color:#FFAB70">command</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"see screenshot.png"</span><span style="color:#E1E4E8">) </span></span>
+<span class="line"><span style="color:#E1E4E8">run(</span><span style="color:#FFAB70">command</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"memory search 'deployment issue'"</span><span style="color:#E1E4E8">) </span></span>
+<span class="line"><span style="color:#E1E4E8">run(</span><span style="color:#FFAB70">command</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"clip sandbox bash 'python3 analyze.py'"</span><span style="color:#E1E4E8">)</span></span></code></pre>
+<p>The LLM still chooses which command to use, but this is fundamentally different from choosing among 15 tools with different schemas. Command selection is string composition within a unified namespace — function selection is context-switching between unrelated APIs.</p>
+<h3 id="llms-already-speak-cli">LLMs already speak CLI</h3>
+<p>Why are CLI commands a better fit for LLMs than structured function calls?</p>
+<p>Because CLI is the densest tool-use pattern in LLM training data. Billions of lines on GitHub are full of:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">README</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> instructions</span></span>
+<span class="line"><span style="color:#B392F0">pip</span><span style="color:#9ECBFF"> install</span><span style="color:#79B8FF"> -r</span><span style="color:#9ECBFF"> requirements.txt</span><span style="color:#E1E4E8"> &#x26;&#x26; </span><span style="color:#B392F0">python</span><span style="color:#9ECBFF"> main.py</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">CI/CD</span><span style="color:#9ECBFF"> build</span><span style="color:#9ECBFF"> scripts</span></span>
+<span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> build</span><span style="color:#E1E4E8"> &#x26;&#x26; </span><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> test</span><span style="color:#E1E4E8"> &#x26;&#x26; </span><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> deploy</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">Stack</span><span style="color:#9ECBFF"> Overflow</span><span style="color:#9ECBFF"> solutions</span></span>
+<span class="line"><span style="color:#B392F0">cat</span><span style="color:#9ECBFF"> /var/log/syslog</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> grep</span><span style="color:#9ECBFF"> "Out of memory"</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> tail</span><span style="color:#79B8FF"> -20</span><span style="color:#E1E4E8"> </span></span></code></pre>
+<p>I don’t need to teach the LLM how to use CLI — <strong>it already knows.</strong> This familiarity is probabilistic and model-dependent, but in practice it’s remarkably reliable across mainstream models.</p>
+<p>Compare two approaches to the same task:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="markdown"><code><span class="line"><span style="color:#E1E4E8">Task: Read a log file, count the error lines</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">Function-calling approach (3 tool calls): 1. read_file(path="/var/log/app.log") → returns entire file 2. search_text(text=&#x3C;entire file>, pattern="ERROR") → returns matching lines 3. count_lines(text=&#x3C;matched lines>) → returns number</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">CLI approach (1 tool call): run(command="cat /var/log/app.log | grep ERROR | wc -l") → "42" </span></span></code></pre>
+<p>One call replaces three. Not because of special optimization — but because Unix pipes natively support composition.</p>
+<h3 id="making-pipes-and-chains-work">Making pipes and chains work</h3>
+<p>A single run isn’t enough on its own. If run can only execute one command at a time, the LLM still needs multiple calls for composed tasks. So I make a chain parser (parseChain) in the command routing layer, supporting four Unix operators:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>| Pipe: stdout of previous command becomes stdin of next </span></span>
+<span class="line"><span>&#x26;&#x26; And: execute next only if previous succeeded </span></span>
+<span class="line"><span>|| Or: execute next only if previous failed </span></span>
+<span class="line"><span>; Seq: execute next regardless of previous result</span></span></code></pre>
+<p>With this mechanism, every tool call can be a <strong>complete workflow:</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">One</span><span style="color:#9ECBFF"> tool</span><span style="color:#9ECBFF"> call:</span><span style="color:#9ECBFF"> download</span><span style="color:#9ECBFF"> →</span><span style="color:#9ECBFF"> inspect</span></span>
+<span class="line"><span style="color:#B392F0">curl</span><span style="color:#79B8FF"> -sL</span><span style="color:#E1E4E8"> $URL </span><span style="color:#79B8FF">-o</span><span style="color:#9ECBFF"> data.csv</span><span style="color:#E1E4E8"> &#x26;&#x26; </span><span style="color:#B392F0">cat</span><span style="color:#9ECBFF"> data.csv</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> head</span><span style="color:#79B8FF"> 5</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">One</span><span style="color:#9ECBFF"> tool</span><span style="color:#9ECBFF"> call:</span><span style="color:#9ECBFF"> read</span><span style="color:#9ECBFF"> →</span><span style="color:#9ECBFF"> filter</span><span style="color:#9ECBFF"> →</span><span style="color:#9ECBFF"> sort</span><span style="color:#9ECBFF"> →</span><span style="color:#9ECBFF"> top</span><span style="color:#79B8FF"> 10</span></span>
+<span class="line"><span style="color:#B392F0">cat</span><span style="color:#9ECBFF"> access.log</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> grep</span><span style="color:#9ECBFF"> "500"</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> sort</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> head</span><span style="color:#79B8FF"> 10</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">One</span><span style="color:#9ECBFF"> tool</span><span style="color:#9ECBFF"> call:</span><span style="color:#9ECBFF"> try</span><span style="color:#9ECBFF"> A,</span><span style="color:#9ECBFF"> fall</span><span style="color:#9ECBFF"> back</span><span style="color:#9ECBFF"> to</span><span style="color:#9ECBFF"> B</span></span>
+<span class="line"><span style="color:#B392F0">cat</span><span style="color:#9ECBFF"> config.yaml</span><span style="color:#F97583"> ||</span><span style="color:#79B8FF"> echo</span><span style="color:#9ECBFF"> "config not found, using defaults"</span><span style="color:#E1E4E8"> </span></span></code></pre>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span> commands × 4 operators — the composition space grows dramatically. And to the LLM, it’s just a string it already knows how to write.</p>
+<blockquote>
+<p>The command line is the LLM’s native tool interface.</p>
+</blockquote>
+<hr>
+<h2 id="heuristic-design-making-cli-guide-the-agent">Heuristic design: making CLI guide the agent</h2>
+<p>Single-tool + CLI solves “what to use.” But the agent still needs to know <strong>“how to use it.”</strong> It can’t Google. It can’t ask a colleague. I use three progressive design techniques to make the CLI itself serve as the agent’s navigation system.</p>
+<h3 id="technique-1-progressive-help-discovery">Technique 1: Progressive —help discovery</h3>
+<p>A well-designed CLI tool doesn’t require reading documentation — because <code>--help</code> tells you everything. I apply the same principle to the agent, structured as <strong>progressive disclosure:</strong> the agent doesn’t need to load all documentation at once, but discovers details on-demand as it goes deeper.</p>
+<h4 id="level-0-tool-description--command-list-injection">Level 0: Tool Description → command list injection</h4>
+<p>The <code>run</code> tool’s description is dynamically generated at the start of each conversation, listing all registered commands with one-line summaries:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="markdown"><code><span class="line"><span style="color:#E1E4E8">Available commands: </span></span>
+<span class="line"><span style="color:#E1E4E8">    cat — Read a text file. For images use 'see'. For binary use 'cat -b'. </span></span>
+<span class="line"><span style="color:#E1E4E8">    see — View an image (auto-attaches to vision) </span></span>
+<span class="line"><span style="color:#E1E4E8">    ls — List files in current topic </span></span>
+<span class="line"><span style="color:#E1E4E8">    write — Write file. Usage: write &#x3C;path> [</span><span style="color:#DBEDFF;text-decoration:underline">content</span><span style="color:#E1E4E8">] or stdin </span></span>
+<span class="line"><span style="color:#E1E4E8">    grep — Filter lines matching a pattern (supports -i, -v, -c) </span></span>
+<span class="line"><span style="color:#E1E4E8">    memory — Search or manage memory </span></span>
+<span class="line"><span style="color:#E1E4E8">    clip — Operate external environments (sandboxes, services) </span></span>
+<span class="line"><span style="color:#E1E4E8">    ...</span></span></code></pre>
+<p>The agent knows what’s available from turn one, but doesn’t need every parameter of every command — that would waste context.</p>
+<blockquote>
+<p><strong>Note:</strong> There’s an open design question here: injecting the full command list vs. on-demand discovery. As commands grow, the list itself consumes context budget. I’m still exploring the right balance. Ideas welcome.</p>
+</blockquote>
+<h4 id="level-1-command-no-args--usage">Level 1: command (no args) → usage</h4>
+<p>When the agent is interested in a command, it just calls it. No arguments? The command returns its own usage:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">→</span><span style="color:#9ECBFF"> run</span><span style="color:#E1E4E8">(command</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"memory"</span><span style="color:#E1E4E8">) [error] memory: usage: memory search</span><span style="color:#F97583">|</span><span style="color:#B392F0">recent</span><span style="color:#F97583">|</span><span style="color:#B392F0">store</span><span style="color:#F97583">|</span><span style="color:#B392F0">facts</span><span style="color:#F97583">|</span><span style="color:#B392F0">forget</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">→</span><span style="color:#9ECBFF"> run</span><span style="color:#E1E4E8">(command</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"clip"</span><span style="color:#E1E4E8">) </span><span style="color:#9ECBFF">clip</span><span style="color:#9ECBFF"> list</span><span style="color:#9ECBFF"> —</span><span style="color:#9ECBFF"> list</span><span style="color:#9ECBFF"> available</span><span style="color:#9ECBFF"> clips</span><span style="color:#9ECBFF"> clip</span><span style="color:#F97583"> &#x3C;</span><span style="color:#9ECBFF">nam</span><span style="color:#E1E4E8">e</span><span style="color:#F97583">></span><span style="color:#9ECBFF"> —</span><span style="color:#9ECBFF"> show</span><span style="color:#9ECBFF"> clip</span><span style="color:#9ECBFF"> details</span><span style="color:#9ECBFF"> and</span><span style="color:#9ECBFF"> commands</span><span style="color:#9ECBFF"> clip</span><span style="color:#F97583"> &#x3C;</span><span style="color:#9ECBFF">nam</span><span style="color:#E1E4E8">e</span><span style="color:#F97583">></span><span style="color:#F97583"> &#x3C;</span><span style="color:#9ECBFF">comman</span><span style="color:#E1E4E8">d</span><span style="color:#F97583">></span><span style="color:#E1E4E8"> [args...] — invoke a command clip </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8">name</span><span style="color:#F97583">></span><span style="color:#E1E4E8"> pull </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8">remote-path</span><span style="color:#F97583">></span><span style="color:#E1E4E8"> [name] — pull file from clip to </span><span style="color:#F97583">local</span><span style="color:#E1E4E8"> clip </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8">name</span><span style="color:#F97583">></span><span style="color:#E1E4E8"> push </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8">local-path</span><span style="color:#F97583">></span><span style="color:#F97583"> &#x3C;</span><span style="color:#E1E4E8">remote</span><span style="color:#F97583">></span><span style="color:#E1E4E8"> — push local file to clip </span></span></code></pre>
+<p>Now the agent knows <code>memory</code> has five subcommands and <code>clip</code> supports list/pull/push. One call, no noise.</p>
+<h4 id="level-2-command-subcommand-missing-args--specific-parameters">Level 2: command subcommand (missing args) → specific parameters</h4>
+<p>The agent decides to use memory search but isn’t sure about the format? It drills down:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">→</span><span style="color:#9ECBFF"> run</span><span style="color:#E1E4E8">(command</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"memory search"</span><span style="color:#E1E4E8">) [error] memory: usage: memory search </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8">query</span><span style="color:#F97583">></span><span style="color:#E1E4E8"> [-t topic_id] [-k keyword]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">→</span><span style="color:#9ECBFF"> run</span><span style="color:#E1E4E8">(command</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"clip sandbox"</span><span style="color:#E1E4E8">) </span><span style="color:#9ECBFF">Clip:</span><span style="color:#9ECBFF"> sandbox</span><span style="color:#9ECBFF"> Commands:</span><span style="color:#9ECBFF"> clip</span><span style="color:#9ECBFF"> sandbox</span><span style="color:#9ECBFF"> bash</span><span style="color:#F97583"> &#x3C;</span><span style="color:#9ECBFF">scrip</span><span style="color:#E1E4E8">t</span><span style="color:#F97583">></span><span style="color:#9ECBFF"> clip</span><span style="color:#9ECBFF"> sandbox</span><span style="color:#9ECBFF"> read</span><span style="color:#F97583"> &#x3C;</span><span style="color:#9ECBFF">pat</span><span style="color:#E1E4E8">h</span><span style="color:#F97583">></span><span style="color:#9ECBFF"> clip</span><span style="color:#9ECBFF"> sandbox</span><span style="color:#9ECBFF"> write</span><span style="color:#F97583"> &#x3C;</span><span style="color:#9ECBFF">pat</span><span style="color:#E1E4E8">h</span><span style="color:#F97583">></span><span style="color:#9ECBFF"> File</span><span style="color:#9ECBFF"> transfer:</span><span style="color:#9ECBFF"> clip</span><span style="color:#9ECBFF"> sandbox</span><span style="color:#9ECBFF"> pull</span><span style="color:#F97583"> &#x3C;</span><span style="color:#9ECBFF">remote-pat</span><span style="color:#E1E4E8">h</span><span style="color:#F97583">></span><span style="color:#E1E4E8"> [local-name] clip sandbox push </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8">local-path</span><span style="color:#F97583">></span><span style="color:#F97583"> &#x3C;</span><span style="color:#E1E4E8">remote-path</span><span style="color:#F97583">></span><span style="color:#E1E4E8"> </span></span></code></pre>
+<p>Progressive disclosure: <strong>overview (injected) → usage (explored) → parameters (drilled down).</strong> The agent discovers on-demand, each level providing just enough information for the next step.</p>
+<p>This is fundamentally different from stuffing 3,000 words of tool documentation into the system prompt. Most of that information is irrelevant most of the time — pure context waste. Progressive help lets the agent decide when it needs more.</p>
+<p>This also imposes a requirement on command design: <strong>every command and subcommand must have complete help output.</strong> It’s not just for humans — it’s for the agent. A good help message means one-shot success. A missing one means a blind guess.</p>
+<h3 id="technique-2-error-messages-as-navigation">Technique 2: Error messages as navigation</h3>
+<p>Agents will make mistakes. The key isn’t preventing errors — it’s <strong>making every error point to the right direction.</strong></p>
+<p>Traditional CLI errors are designed for humans who can Google. Agents can’t Google. So I require every error to contain both “what went wrong” and “what to do instead”:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Traditional CLI: $ cat photo.png cat: binary file (standard output) → Human Googles "how to view image in terminal"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>My design: [error] cat: binary image file (182KB). Use: see photo.png → Agent calls see directly, one-step correction </span></span></code></pre>
+<p>More examples:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="txt"><code><span class="line"><span>[error] unknown command: foo Available: cat, ls, see, write, grep, memory, clip, ... → Agent immediately knows what commands exist</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>[error] not an image file: data.csv (use cat to read text files) → Agent switches from see to cat</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>[error] clip "sandbox" not found. Use 'clip list' to see available clips → Agent knows to list clips first </span></span></code></pre>
+<p>Technique 1 (help) solves “what can I do?” Technique 2 (errors) solves “what should I do instead?” Together, the agent’s recovery cost is minimal — usually 1-2 steps to the right path.</p>
+<h4 id="real-case-the-cost-of-silent-stderr">Real case: The cost of silent stderr</h4>
+<p>For a while, my code silently dropped stderr when calling external sandboxes — whenever stdout was non-empty, stderr was discarded. The agent ran <code>pip install pymupdf</code>, got exit code 127. stderr contained <code>bash: pip: command not found</code>, but the agent couldn’t see it. It only knew “it failed,” not “why” — and proceeded to blindly guess 10 different package managers:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="txt"><code><span class="line"><span>pip install → 127 (doesn't exist)</span></span>
+<span class="line"><span>python3 -m pip → 1 (module not found) </span></span>
+<span class="line"><span>uv pip install → 1 (wrong usage) </span></span>
+<span class="line"><span>pip3 install → 127 sudo apt install → 127 </span></span>
+<span class="line"><span>... 5 more attempts ... </span></span>
+<span class="line"><span>uv run --with pymupdf python3 script.py → 0 ✓ (10th try)</span></span></code></pre>
+<p>10 calls, ~5 seconds of inference each. If stderr had been visible the first time, one call would have been enough.</p>
+<blockquote>
+<p><strong>stderr is the information agents need most, precisely when commands fail. Never drop it.</strong></p>
+</blockquote>
+<h3 id="technique-3-consistent-output-format">Technique 3: Consistent output format</h3>
+<p>The first two techniques handle discovery and correction. The third lets the agent <strong>get better at using the system over time.</strong></p>
+<p>I append consistent metadata to every tool result:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>file1.txt </span></span>
+<span class="line"><span>file2.txt </span></span>
+<span class="line"><span>dir1/ </span></span>
+<span class="line"><span>[exit:0 | 12ms]</span></span></code></pre>
+<p>The LLM extracts two signals:</p>
+<p><strong>Exit codes (Unix convention, LLMs already know these):</strong></p>
+<ul>
+<li><code>exit:0</code> — success</li>
+<li><code>exit:1</code> — general error</li>
+<li><code>exit:127</code> — command not found</li>
+</ul>
+<p><strong>Duration (cost awareness):</strong></p>
+<ul>
+<li><code>12ms</code> — cheap, call freely</li>
+<li><code>3.2s</code> — moderate</li>
+<li><code>45s</code> — expensive, use sparingly</li>
+</ul>
+<p>After seeing <code>[exit:N | Xs]</code> dozens of times in a conversation, the agent internalizes the pattern. It starts anticipating — seeing <code>exit:1</code> means check the error, seeing long duration means reduce calls.</p>
+<blockquote>
+<p><strong>Consistent output format makes the agent smarter over time. Inconsistency makes every call feel like the first.</strong></p>
+</blockquote>
+<p>The three techniques form a progression:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>--help → "What can I do?" → Proactive discovery </span></span>
+<span class="line"><span>Error Msg → "What should I do?" → Reactive correction </span></span>
+<span class="line"><span>Output Fmt → "How did it go?" → Continuous learning</span></span></code></pre>
+<hr>
+<h2 id="two-layer-architecture-engineering-the-heuristic-design">Two-layer architecture: engineering the heuristic design</h2>
+<p>The section above described how CLI guides agents at the semantic level. But to make it work in practice, there’s an engineering problem: <strong>the raw output of a command and what the LLM needs to see are often very different things.</strong></p>
+<h3 id="two-hard-constraints-of-llms">Two hard constraints of LLMs</h3>
+<p><strong>Constraint A: The context window is finite and expensive.</strong> Every token costs money, attention, and inference speed. Stuffing a 10MB file into context doesn’t just waste budget — it pushes earlier conversation out of the window. The agent “forgets.”</p>
+<p><strong>Constraint B: LLMs can only process text.</strong> Binary data produces high-entropy meaningless tokens through the tokenizer. It doesn’t just waste context — it <strong>disrupts attention on surrounding valid tokens,</strong> degrading reasoning quality.</p>
+<p>These two constraints mean: raw command output can’t go directly to the LLM — it needs a <strong>presentation layer</strong> for processing. But that processing can’t affect command execution logic — or pipes break. Hence, two layers.</p>
+<h3 id="execution-layer-vs-presentation-layer">Execution layer vs. presentation layer</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>┌─────────────────────────────────────────────┐</span></span>
+<span class="line"><span>│  Layer 2: LLM Presentation Layer            │  ← Designed for LLM constraints</span></span>
+<span class="line"><span>│  Binary guard | Truncation+overflow | Meta   │</span></span>
+<span class="line"><span>├─────────────────────────────────────────────┤</span></span>
+<span class="line"><span>│  Layer 1: Unix Execution Layer              │  ← Pure Unix semantics</span></span>
+<span class="line"><span>│  Command routing | pipe | chain | exit code │</span></span>
+<span class="line"><span>└─────────────────────────────────────────────┘</span></span></code></pre>
+<p>When <code>cat bigfile.txt | grep error | head 10</code> executes:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Inside Layer 1: </span></span>
+<span class="line"><span>    cat output → [500KB raw text] → </span></span>
+<span class="line"><span>    grep input grep output → [matching lines] → head input </span></span>
+<span class="line"><span>    head output → [first 10 lines]</span></span></code></pre>
+<p>If you truncate <code>cat</code>’s output in Layer 1 → grep only searches the first 200 lines, producing incomplete results. If you add <code>[exit:0]</code> in Layer 1 → it flows into <code>grep</code> as data, becoming a search target.</p>
+<p>So Layer 1 must remain <strong>raw, lossless, metadata-free.</strong> Processing only happens in Layer 2 — after the pipe chain completes and the final result is ready to return to the LLM.</p>
+<blockquote>
+<p><strong>Layer 1 serves Unix semantics. Layer 2 serves LLM cognition. The separation isn’t a design preference — it’s a logical necessity.</strong></p>
+</blockquote>
+<h3 id="layer-2s-four-mechanisms">Layer 2’s four mechanisms</h3>
+<p><strong>Mechanism A: Binary Guard (addressing Constraint B)</strong></p>
+<p>Before returning anything to the LLM, check if it’s text:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Null byte detected → binary </span></span>
+<span class="line"><span>UTF-8 validation failed → binary </span></span>
+<span class="line"><span>Control character ratio > 10% → binary</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>If image: [error] binary image (182KB). Use: see photo.png </span></span>
+<span class="line"><span>If other: [error] binary file (1.2MB). Use: cat -b file.bin </span></span></code></pre>
+<p>The LLM never receives data it can’t process.</p>
+<p><strong>Mechanism B: Overflow Mode (addressing Constraint A)</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Output > 200 lines or > 50KB? </span></span>
+<span class="line"><span>    → Truncate to first 200 lines (rune-safe, won't split UTF-8) </span></span>
+<span class="line"><span>    → Write full output to /tmp/cmd-output/cmd-{n}.txt </span></span>
+<span class="line"><span>    → Return to LLM:</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    [first 200 lines]</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    --- output truncated (5000 lines, 245.3KB) ---</span></span>
+<span class="line"><span>    Full output: /tmp/cmd-output/cmd-3.txt</span></span>
+<span class="line"><span>    Explore: cat /tmp/cmd-output/cmd-3.txt | grep &#x3C;pattern></span></span>
+<span class="line"><span>         cat /tmp/cmd-output/cmd-3.txt | tail 100</span></span>
+<span class="line"><span>    [exit:0 | 1.2s]</span></span></code></pre>
+<p>Key insight: the LLM already knows how to use <code>grep</code>, <code>head</code>, <code>tail</code> to navigate files. Overflow mode transforms “large data exploration” into a skill the LLM already has.</p>
+<p><strong>Mechanism C: Metadata Footer</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>actual output here </span></span>
+<span class="line"><span>[exit:0 | 1.2s]</span></span></code></pre>
+<p>Exit code + duration, appended as the last line of Layer 2. Gives the agent signals for success/failure and cost awareness, without polluting Layer 1’s pipe data.</p>
+<p><strong>Mechanism D: stderr Attachment</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>When command fails with stderr: </span></span>
+<span class="line"><span>    output + "\n[stderr] " + stderr</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Ensures the agent can see why something failed, preventing blind retries. </span></span></code></pre>
+<h2 id="lessons-learned-stories-from-production">Lessons learned: stories from production</h2>
+<h3 id="story-1-a-png-that-caused-20-iterations-of-thrashing">Story 1: A PNG that caused 20 iterations of thrashing</h3>
+<p>A user uploaded an architecture diagram. The agent read it with <code>cat</code>, receiving 182KB of raw PNG bytes. The LLM’s tokenizer turned these bytes into thousands of meaningless tokens crammed into the context. The LLM couldn’t make sense of it and started trying different read approaches — <code>cat -f</code>, <code>cat --format</code>, <code>cat --type image</code> — each time receiving the same garbage. After 20 iterations, the process was force-terminated.</p>
+<p><strong>Root cause:</strong>: <code>cat</code> had no binary detection, Layer 2 had no guard. <strong>Fix:</strong> <code>isBinary()</code> guard + error guidance <code>Use: see photo.png.</code> <strong>Lesson:</strong> The tool result is the agent’s eyes. Return garbage = agent goes blind.</p>
+<h3 id="story-2-silent-stderr-and-10-blind-retries">Story 2: Silent stderr and 10 blind retries</h3>
+<p>The agent needed to read a PDF. It tried <code>pip install pymupdf</code>, got exit code 127. stderr contained <code>bash: pip: command not found</code>, but the code dropped it — because there was some stdout output, and the logic was “if stdout exists, ignore stderr.”</p>
+<p>The agent only knew “it failed,” not “why.” What followed was a long trial-and-error:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>pip install → 127 (doesn't exist) </span></span>
+<span class="line"><span>python3 -m pip → 1 (module not found) </span></span>
+<span class="line"><span>uv pip install → 1 (wrong usage) </span></span>
+<span class="line"><span>pip3 install → 127 sudo apt install → 127 </span></span>
+<span class="line"><span>... 5 more attempts ... </span></span>
+<span class="line"><span>uv run --with pymupdf python3 script.py → 0 ✓</span></span></code></pre>
+<p>10 calls, ~5 seconds of inference each. If stderr had been visible the first time, one call would have sufficed.</p>
+<p><strong>Root cause:</strong> <code>InvokeClip</code> silently dropped stderr when stdout was non-empty. <strong>Fix:</strong> Always attach stderr on failure. <strong>Lesson:</strong> stderr is the information agents need most, precisely when commands fail.</p>
+<h3 id="story-3-the-value-of-overflow-mode">Story 3: The value of overflow mode</h3>
+<p>The agent analyzed a 5,000-line log file. Without truncation, the full text (~200KB) was stuffed into context. The LLM’s attention was overwhelmed, response quality dropped sharply, and earlier conversation was pushed out of the context window.</p>
+<p>With overflow mode:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[first 200 lines of log content]</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>--- output truncated (5000 lines, 198.5KB) --- </span></span>
+<span class="line"><span>Full output: /tmp/cmd-output/cmd-3.txt </span></span>
+<span class="line"><span>Explore: cat /tmp/cmd-output/cmd-3.txt | grep &#x3C;pattern> </span></span>
+<span class="line"><span>    cat /tmp/cmd-output/cmd-3.txt | tail 100 [exit:0 | 45ms] </span></span></code></pre>
+<p>The agent saw the first 200 lines, understood the file structure, then used grep to pinpoint the issue — 3 calls total, under 2KB of context.</p>
+<p><strong>Lesson:</strong> Giving the agent a “map” is far more effective than giving it the entire territory.</p>
+<hr>
+<h2 id="boundaries-and-limitations">Boundaries and limitations</h2>
+<p>CLI isn’t a silver bullet. Typed APIs may be the better choice in these scenarios:</p>
+<ul>
+<li><strong>Strongly-typed interactions:</strong> Database queries, GraphQL APIs, and other cases requiring structured input/output. Schema validation is more reliable than string parsing.</li>
+<li><strong>High-security requirements:</strong> CLI’s string concatenation carries inherent injection risks. In untrusted-input scenarios, typed parameters are safer. agent-clip mitigates this through sandbox isolation.</li>
+<li><strong>Native multimodal:</strong> Pure audio/video processing and other binary-stream scenarios where CLI’s text pipe is a bottleneck.</li>
+</ul>
+<p>Additionally, “no iteration limit” doesn’t mean “no safety boundaries.” Safety is ensured by external mechanisms:</p>
+<ul>
+<li><strong>Sandbox isolation:</strong> Commands execute inside BoxLite containers, no escape possible</li>
+<li><strong>API budgets:</strong> LLM calls have account-level spending caps</li>
+<li><strong>User cancellation:</strong> Frontend provides cancel buttons, backend supports graceful shutdown</li>
+</ul>
+<hr>
+<blockquote>
+<p>Hand Unix philosophy to the execution layer, hand LLM’s cognitive constraints to the presentation layer, and use help, error messages, and output format as three progressive heuristic navigation techniques.</p>
+</blockquote>
+<p>CLI is all agents need.</p>
+<hr>
+<p>Source code (Go): github.com/epiral/agent-clip</p>
+<p>Core files: <code>internal/tools.go</code> (command routing), <code>internal/chain.go</code> (pipes), <code>internal/loop.go</code> (two-layer agentic loop), <code>internal/fs.go</code> (binary guard), <code>internal/clip.go</code> (stderr handling), <code>internal/browser.go</code> (vision auto-attach), <code>internal/memory.go</code> (semantic memory).</p>
+<h2 id="comments">Comments</h2>
+<p>Most commands never touch the OS. cat, grep, memory search, browser open — these look like shell commands but they’re implemented as a Go command router. The LLM outputs a string, I parse it and dispatch to native functions. No os/exec, no shell injection surface. It’s essentially typed functions wearing CLI syntax — same access control, but the LLM gets a familiar interface.</p>
+<p>When you do need real OS execution (e.g. running a Python script or installing packages), it runs inside a micro-VM — an isolated QCOW2 virtual machine with its own filesystem. The agent can do whatever it wants inside the sandbox. It can rm -rf / and nothing happens to the host. Sandbox isolation > command filtering.</p>  </main> <script type="module">var p={inline:["$","$"],display:["$$","$$"]};function c(a,t){t===void 0&&(t=p);for(var o=a.querySelectorAll(".katex-mathml + .katex-html"),n=0;n<o.length;n++){var r=o[n];r.remove?r.remove():r.parentNode&&r.parentNode.removeChild(r)}for(var d=a.querySelectorAll(".katex-mathml"),i=0;i<d.length;i++){var l=d[i],e=l.querySelector("annotation");e&&(l.replaceWith?l.replaceWith(e):l.parentNode&&l.parentNode.replaceChild(e,l),e.innerHTML=t.inline[0]+e.innerHTML+t.inline[1])}for(var f=a.querySelectorAll(".katex-display annotation"),v=0;v<f.length;v++){var s=f[v];s.innerHTML=t.display[0]+s.innerHTML.substr(t.inline[0].length,s.innerHTML.length-t.inline[0].length-t.inline[1].length)+t.display[1]}return a}function h(a){var t=a instanceof Element?a:a.parentElement;return t&&t.closest(".katex")}document.addEventListener("copy",function(a){var t=window.getSelection();if(!(t.isCollapsed||!a.clipboardData)){var o=a.clipboardData,n=t.getRangeAt(0),r=h(n.startContainer);r&&n.setStartBefore(r);var d=h(n.endContainer);d&&n.setEndAfter(d);var i=n.cloneContents();if(i.querySelector(".katex-mathml")){var l=Array.prototype.map.call(i.childNodes,e=>e instanceof Text?e.textContent:e.outerHTML).join("");o.setData("text/html",l),o.setData("text/plain",c(i).textContent),a.preventDefault()}}});</script> </body> </html>
