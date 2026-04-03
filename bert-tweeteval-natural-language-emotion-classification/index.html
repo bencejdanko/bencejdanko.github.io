@@ -1,0 +1,396 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Bert-TweetEval: Natural Language Emotion Classification | bence</title><!-- SEO --><meta name="description" content="Bidirectional Encoder Representations from Transformers (BERT) are an encoder-transformer based architecture that is more suitable for some transformer tasks, such as classifying natural language."><link rel="canonical" href="https://bencejdanko.github.io/bert-tweeteval-natural-language-emotion-classification/"><link rel="sitemap" href="/sitemap-index.xml"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://bencejdanko.github.io/bert-tweeteval-natural-language-emotion-classification/"><meta property="og:title" content="Bert-TweetEval: Natural Language Emotion Classification | bence"><meta property="og:description" content="Bidirectional Encoder Representations from Transformers (BERT) are an encoder-transformer based architecture that is more suitable for some transformer tasks, such as classifying natural language."><!-- Twitter --><meta property="twitter:card" content="summary"><meta property="twitter:url" content="https://bencejdanko.github.io/bert-tweeteval-natural-language-emotion-classification/"><meta property="twitter:title" content="Bert-TweetEval: Natural Language Emotion Classification | bence"><meta property="twitter:description" content="Bidirectional Encoder Representations from Transformers (BERT) are an encoder-transformer based architecture that is more suitable for some transformer tasks, such as classifying natural language."><!-- Pagefind Search --><link href="/pagefind/pagefind-ui.css" rel="stylesheet"><script src="/pagefind/pagefind-ui.js"></script><link rel="stylesheet" href="/_astro/_slug_.BC6mtDjz.css">
+<style>.toc-list[data-astro-cid-xvrfupwn]{list-style:none;margin:0;padding:0;display:grid;gap:.25rem}
+</style><script type="module" src="/_astro/page.BBjLP_j2.js"></script>
+<script>
+          (function() {
+            if (!document.querySelector('link[href*="tldraw.css"]')) {
+              const link = document.createElement('link');
+              link.rel = 'stylesheet';
+              link.href = 'https://unpkg.com/tldraw@3.15.6/tldraw.css';
+              document.head.appendChild(link);
+            }
+          })();
+        </script></head> <body class="min-h-screen flex justify-center bg-white"> <main class="prose w-full py-10 max-w-2xl max-w-2xl relative" data-pagefind-body> <div id="search" class="not-prose mb-6 min-h-[40px]" data-pagefind-ignore></div> <script>
+        window.addEventListener('DOMContentLoaded', (event) => {
+          if (typeof PagefindUI !== 'undefined') {
+            new PagefindUI({ 
+              element: "#search", 
+              showSubResults: true,
+              showImages: false,
+              resetStyles: false,
+              translations: {
+                placeholder: "bencejdanko"
+              }
+            });
+          }
+        });
+      </script> <nav class="not-prose mb-8 font-sans" data-pagefind-ignore> <ul class="flex gap-4 list-none p-0"> <li> <a href="/sitemap-0.xml" class="text-sm text-black no-underline border-b-2 border-transparent hover:border-black pb-0.5" aria-label="Sitemap"> <span class="icon-[mdi--sitemap] inline-block align-middle"></span> </a> </li> <li> <a href="/" class="text-sm text-black no-underline border-b-2 border-transparent hover:border-black pb-0.5"> home </a> </li><li> <a href="/projects" class="text-sm text-black no-underline border-b-2 border-transparent hover:border-black pb-0.5"> projects </a> </li><li> <a href="/glossary" class="text-sm text-black no-underline border-b-2 border-transparent hover:border-black pb-0.5"> glossary </a> </li><li> <a href="/photography" class="text-sm text-black no-underline border-b-2 border-transparent hover:border-black pb-0.5"> photography </a> </li> </ul> </nav> <aside class="post-toc"> <div class="font-sans text-xs toc-sidebar-wrap not-prose" data-astro-cid-xvrfupwn><p class="font-bold tracking-widest mb-4" data-astro-cid-xvrfupwn>
+Contents
+</p><hr data-astro-cid-xvrfupwn><a href="#top" class="my-2 block font-bold no-underline" data-astro-cid-xvrfupwn>
+Top
+</a><nav aria-label="Table of contents" data-astro-cid-xvrfupwn><ul class="toc-list" data-astro-cid-xvrfupwn><li style="padding-left: 0rem;" data-astro-cid-xvrfupwn><a href="#abstract" class="no-underline" data-astro-cid-xvrfupwn>Abstract</a></li><li style="padding-left: 0rem;" data-astro-cid-xvrfupwn><a href="#introduction-and-related-work-sec" class="no-underline" data-astro-cid-xvrfupwn>Introduction and Related Work ${#sec}</a></li><li style="padding-left: 0rem;" data-astro-cid-xvrfupwn><a href="#task-description" class="no-underline" data-astro-cid-xvrfupwn>Task Description</a></li><li style="padding-left: 0rem;" data-astro-cid-xvrfupwn><a href="#summarized-results" class="no-underline" data-astro-cid-xvrfupwn>Summarized Results</a></li><li style="padding-left: 0rem;" data-astro-cid-xvrfupwn><a href="#baseline-analysis" class="no-underline" data-astro-cid-xvrfupwn>Baseline Analysis</a></li><li style="padding-left: 0rem;" data-astro-cid-xvrfupwn><a href="#training-strategy-sec" class="no-underline" data-astro-cid-xvrfupwn>Training Strategy ${#sec}</a></li><li style="padding-left: 0.9rem;" data-astro-cid-xvrfupwn><a href="#corruption-stress-testing-sec" class="no-underline" data-astro-cid-xvrfupwn>Corruption Stress Testing ${#sec}</a></li><li style="padding-left: 0rem;" data-astro-cid-xvrfupwn><a href="#error-analysis-sec" class="no-underline" data-astro-cid-xvrfupwn>Error Analysis ${#sec}</a></li><li style="padding-left: 0rem;" data-astro-cid-xvrfupwn><a href="#open-source-and-closed-models-sec" class="no-underline" data-astro-cid-xvrfupwn>Open Source and Closed Models ${#sec}</a></li></ul></nav></div> </aside><h1>Bert-TweetEval: Natural Language Emotion Classification</h1> <div class="mb-4 text-black text-lg"> Bidirectional Encoder Representations from Transformers (BERT) are an encoder-transformer based architecture that is more suitable for some transformer tasks, such as classifying natural language. </div> <div class="text-sm text-gray-600"> <span> Bence Jordan Dankó  </span> </div><div class="text-sm">
+Last updated March 5, 2026  at 3:00 PM </div> <div class="mt-2 flex flex-wrap gap-x-2 font-sans font-bold"> <span class="italic">Index Terms: </span> <span>Emotion analysis</span><span>natural language understanding</span><span>transformer</span><span>DistilBERT</span><span>RoBERTa</span><span>tokenizer</span> </div><div class="mt-2 font-sans font-bold text-sm text-gray-700"> <span class="italic">Appendices: </span> <div> <a href="/appendices/minimal-prompt" class="underline"> A </a>
+: Minimal Prompt for TweetEval Emotion Classification </div><div> <a href="/appendices/structured-prompt" class="underline"> B </a>
+: Structured Prompt for TweetEval Emotion Classification </div><div> <a href="/appendices/confusion-matrices" class="underline"> C </a>
+: Confusion matrices comparison across all evaluated models. </div><div> <a href="/appendices/bert-tweeteval-screenshots" class="underline"> D </a>
+: Screenshots for Run Verification </div><div> <a href="/appendices/missclassfied-base-models" class="underline"> E </a>
+: Misclassified Base Models TweetEval Samples </div><div> <a href="/appendices/missclassfied-tuned-models" class="underline"> F </a>
+: Misclassified Fine-Tuned Model TweetEval Samples </div><div> <a href="/appendices/bert-tweeteval-loss" class="underline"> G </a>
+: Bert-TweetEval training loss diagrams. </div> </div><div class="drop-cap"> <h2 id="abstract">Abstract</h2>
+<p>Extracting sentiment and intent from human natural language holds immense value in strategic decision-making in many domains. A variety of transformer architectures and base models have emerged as notable language processors, but they vary widely in training scale, vocabulary, and parametric counts. In real-world deployment, models can be hindered due to their cost and latency constraints. Models deployed to production are also subject to real-world stress cases, such as lexical diversity, unknown symbols and vocabulary, and dataset imbalance from the training data. In this work, we analyze lightweight variants of base and fine-tuned Bidirectional Encoder Representations from Transformers (BERT) models performance on the TweetEval emotion classification task. We compare and train DistilBERT and DistilRoBERTa variants and the suitability of their tokenizer architectures (WordPiece, BPE) for the emotion classification domain and their impact on performance. We construct a framework to stress-test distribution shifts and corrupted inputs, and conduct structured error analysis and interpret model confidence and calibration. We also benchmark additional competitive LLM models, Qwen3-4B-Instruct-2507 and GPT 4o-mini, under consistent prompting strategies on the same classification task. All code is released to the public at <a href="https://github.com/bencejdanko/bert-tweeteval">https://github.com/bencejdanko/bert-tweeteval</a>. Models are released to the public at <a href="https://huggingface.co/bdanko">https://huggingface.co/bdanko</a>.</p>
+<h2 id="introduction-and-related-work-sec">Introduction and Related Work {#sec<div></div>}</h2>
+<p>TweetEval <span class="" id="citation--barbieri2020tweetevalunifiedbenchmarkcomparative--1">[<a href="#bib-barbieri2020tweetevalunifiedbenchmarkcomparative">1</a>]</span> consists of seven Twitter-specific classification tasks, including emoji prediction, emotion recognition, hate speech detection, irony detection, offensive language identification, sentiment analysis, and stance detection. TweetEval and BERT-variant combinations have already been extensively explored. BERTweet <span class="" id="citation--nguyen-etal-2020-bertweet--2">[<a href="#bib-nguyen-etal-2020-bertweet">2</a>]</span>, a prior RoBERTa-based model trained on a corpus of 850 million English tweets, established the state-of-the-art (SOTA) baseline across most of TweetEval’s subtasks and proved the value in domain-specific pre-training, outperforming the original BERT and RoBERTa. TimeLMs <span class="" id="citation--loureiro2022timelmsdiachroniclanguagemodels--3">[<a href="#bib-loureiro2022timelmsdiachroniclanguagemodels">3</a>]</span> later introduced models continuously trained on fresh Twitter data, outperforming BERTweet in all TweetEval domains except irony detection. SuperTweetEval <span class="" id="citation--antypas2023supertweetevalchallengingunifiedheterogeneous--4">[<a href="#bib-antypas2023supertweetevalchallengingunifiedheterogeneous">4</a>]</span> has also been since released, adding several more NLP task domains that TweetEval lacked.</p>
+<h2 id="task-description">Task Description</h2>
+<p>In this work, we will be targeting emotion classification task from the original TweetEval. Each sample is labeled with one of 4 classes: “anger”, “sadness”, “joy”, or “optimism”. The dataset is heavily imbalanced, with an overrepresentation of “anger” classes at 42.98% of the dataset, and underrepresentation of “optimism” at 9.03%, while joy and sadness sit at 21.74% and 26.25% respectively. In total, we have a training and validation set of sizes 3257 and 374. We test our results on 1421 samples.</p>
+<p>We compare models across these key metrics:</p>
+<ul>
+<li><strong>Accuracy</strong>: Number of overall correct classifications over the validation sample.</li>
+<li><strong>Macro F1</strong>: Macro F1 is the arithmetic mean of the F1 scores calculated for each individual class. It treats all classes equally, regardless of how many samples each class contains, meaning unbalanced classes are given the same weight:</li>
+</ul>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>Macro F1</mtext><mo>=</mo><mfrac><mn>1</mn><mi>n</mi></mfrac><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mi>F</mi><msub><mn>1</mn><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">\text{Macro F1} = \frac{1}{n} \sum_{i=1}^{n} F1_{i}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord">Macro F1</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.9291em;vertical-align:-1.2777em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal">n</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.6514em;"><span style="top:-1.8723em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.3em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.2777em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mord"><span class="mord">1</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span>
+<ul>
+<li><strong>Precision</strong>: Number of true positives calculated over all classifications marked as positives. Measures the quality of a positive prediction. We are taking the macro average.</li>
+<li><strong>Recall</strong>: The true positive rate. Out of all positive cases in the data, how many can the classifier identify. We are taking the macro average.</li>
+<li><strong>ms/100 samples</strong>: Test of throughput. We test this by running evaluation inference in batches of 100 on all our models, except for GPT 4o-mini, in which we instead wall-clock for 100 async API requests (up to 20 concurrent).</li>
+<li><strong>Expected Calibration Error (ECE)</strong>: A measure of how well a model’s confidence aligns with its actual accuracy. If a model assigns a probability of 0.90 to a prediction, it should be correct 90% of the time. This tests for overconfident or underconfident models, and typically an ECE score of 0.01 or 0.02 is considered reliable.</li>
+</ul>
+<p>To ensure reproducability, we set all configurable seeds to 15179996. No further data processing was done. For example, in future work, it would be possible to experiment with NLP augmentation techniques like Easy Data Augmentation (EDA) <span class="" id="citation--wei2019edaeasydataaugmentation--5">[<a href="#bib-wei2019edaeasydataaugmentation">5</a>]</span>, back-translation<span class="" id="citation--edunov2018understandingbacktranslationscale--6">[<a href="#bib-edunov2018understandingbacktranslationscale">6</a>]</span>, random masking or MixUp <span class="" id="citation--sun2020mixuptransformerdynamicdataaugmentation--7">[<a href="#bib-sun2020mixuptransformerdynamicdataaugmentation">7</a>]</span> and variants. However, these are currently out of scope for our tasks, so we will omit them. All local tests were done evaluated using the NVIDIA L4 GPU as hardware.</p>
+<h2 id="summarized-results">Summarized Results</h2>
+<figure class="table-figure" id="tbl"><h4 class="table-title" id="evaluation-reference">Evaluation Reference</h4>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Question</th><th>Location</th></tr></thead><tbody><tr><td>Part A – Zero-Shot Baseline</td><td>Final Results at Table \ref{tbl<div></div>}</td></tr><tr><td>Part B – Fine-Tuning Transformers</td><td>Final Results at Table \ref{tbl<div></div>}.</td></tr><tr><td></td><td>Training strategy located at Section \ref{sec<div></div>}.</td></tr><tr><td></td><td>Loss curves and explanation at Appendix \ref{sec<div></div>}</td></tr><tr><td></td><td>Deployment Stress tests at Section \ref{sec<div></div>}</td></tr><tr><td>Part C – Error Analysis</td><td>Error Analysis at Section \ref{sec<div></div>}</td></tr><tr><td>Part D – LLMs</td><td>Minimal Prompt at Appendix \ref{sec<div></div>}</td></tr><tr><td></td><td>Strucured Prompt at Appendix \ref{sec<div></div>}</td></tr><tr><td></td><td>Final Results at Table \ref{tbl<div></div>}</td></tr><tr><td></td><td>Prompt Explanation at Section \ref{sec<div></div>}</td></tr><tr><td>Other Requirements</td><td>Summary of hyperparameters at Section \ref{sec<div></div>}.</td></tr><tr><td></td><td>Final output table at Table \ref{tbl<div></div>}</td></tr><tr><td></td><td>Training screenshots located at Appendix \ref{sec<div></div>}</td></tr><tr><td></td><td>Confusion matrices located at Appendix \ref{sec<div></div>}</td></tr></tbody></table><figcaption>A reference guide for evaluators</figcaption></figure>
+<p>In our studies, we reaffirmed that domain specific pre-training provides BERT models state of the art results on NLP classification tasks. We also demonstrate the arising competitive performance of open-source decoder models against closed-source.</p>
+<figure class="table-figure" id="tbl"><h4 class="table-title" id="summarized-results-from-tweeteval-emotion-classification">Summarized Results from TweetEval Emotion Classification</h4>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Model</th><th>Accuracy</th><th>Macro F</th><th>Macro Precision</th><th>Macro Recall</th><th>ms/100 samples</th><th>ECE</th></tr></thead><tbody><tr><td>DistilBERT (WordPiece)</td><td>0.083744</td><td>0.064219</td><td>0.384379</td><td>0.192035</td><td>312.318607</td><td>0.167510</td></tr><tr><td>DistilRoBERTa (BPE)</td><td>0.217452</td><td>0.155317</td><td>0.177579</td><td>0.200315</td><td><strong>299.071175</strong></td><td>0.056845</td></tr><tr><td>bdanko/bert-tweeteval-distilbert</td><td>0.79803</td><td>0.761196</td><td>0.767879</td><td>0.756296</td><td></td><td>0.0364</td></tr><tr><td>bdanko/bert-tweeteval-distilroberta</td><td>0.788881</td><td>0.750644</td><td>0.799548</td><td>0.728545</td><td></td><td>0.0364</td></tr><tr><td>GPT-4o-mini (Minimal Prompt)</td><td>0.800141</td><td>0.601466</td><td>0.653766</td><td>0.579754</td><td>5060.112734</td><td></td></tr><tr><td>GPT-4o-mini (Structured Prompt)</td><td><strong>0.821956</strong></td><td><strong>0.781499</strong></td><td>0.791218</td><td><strong>0.773544</strong></td><td>3823.308211</td><td></td></tr><tr><td>Qwen3-4B-Instruct-2507 (Minimal Prompt)</td><td>0.751583</td><td>0.584864</td><td>0.594974</td><td>0.581751</td><td>2571.471757</td><td></td></tr><tr><td>Qwen3-4B-Instruct-2507 (Structured Prompt)</td><td>0.812104</td><td>0.758003</td><td><strong>0.793805</strong></td><td>0.741873</td><td>4931.231370</td><td></td></tr></tbody></table><figcaption>Final comparison chart across all model evaluations on TweetEval Emotion Classification. While we see that LLMs dominate on performance benchmarks, BERT-architecture models can reach nearly the same performance.</figcaption></figure>
+<h2 id="baseline-analysis">Baseline Analysis</h2>
+<p>On our baseline analysis, we found that the original DistilBert and DistilRoBERTa models severely underperformed on the TweetEval dataset. From Figure \ref{fig</p><div></div>} and Figure \ref{fig<div></div>}, we see an extreme bias towards particular classifications and distributions that do not match our dataset and domain.<p></p>
+<h2 id="training-strategy-sec">Training Strategy {#sec<div></div>}</h2>
+<p>On both models, we initialize for 20 training epochs, a batch size of 16, AdamW optimization using a learning rate of 2e-5 and weight decay of 0.01. We employ EarlyStoppingCallback, early stopping based on the Macro <a href="/glossary#f1-score" title="F1 score" class="glossary-link">F1 score</a> on the validation set, and then select for the model with the best Macro <a href="/glossary#f1-score" title="F1 score" class="glossary-link">F1 score</a> after 3 failed improvements (patience of 3). We choose early stopping as our models experimentally overfit very easily, and we select Macro F1 as our stopping metric as it weighs each class equally, which is particularly important due to our imbalanced dataset.</p>
+<h3 id="corruption-stress-testing-sec">Corruption Stress Testing {#sec<div></div>}</h3>
+<p>To simulate data-corruption stress tests, we randomly introduce typos, hashtag splitting, and emoji removal.</p>
+<ul>
+<li><strong>Typos</strong>: We randomly swap, delete, or insert characters into words with chance <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>=</mo><mn>0.1</mn></mrow><annotation encoding="application/x-tex">p=0.1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.1</span></span></span></span>. This tests the model robustness against misspelled but recognizable words.</li>
+<li><strong>Split Hashtags</strong>: We identify hashtags and split CamelCase words or remove the hashtag. This tests if the model relies on the hashtag or underlying semantic content better.</li>
+<li><strong>Remove Emoji</strong>: Emojis strongly indicate emotion, and removing them tests if the model is robust enough to understand the other semantic cues.</li>
+</ul>
+<p>We’ll also conduct domain shift simulation. We create a shift by filtering tweets without mentions, links, or hashtags and compare performance.</p>
+<ul>
+<li><strong>Mentions</strong>: We compare performance once we strip all @user mentions from the evaluation.</li>
+<li><strong>Links</strong>: We compare performance once we strip all http links.</li>
+<li><strong>Hashtags</strong>: We compare performance once we strip all hashtags.</li>
+</ul>
+<figure class="table-figure" id="tbl"><h4 class="table-title" id="corruption-ablations">Corruption Ablations</h4>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Dataset Shift / Corruption</th><th>Accuracy (DistilBERT)</th><th>ECE (DistilBERT)</th><th>Macro F1 (DistilBERT)</th><th>Macro Precision (DistilBERT)</th><th>Macro Recall (DistilBERT)</th><th>Accuracy (DistilRoBERTa)</th><th>ECE (DistilRoBERTa)</th><th>Macro F1 (DistilRoBERTa)</th><th>Macro Precision (DistilRoBERTa)</th><th>Macro Recall (DistilRoBERTa)</th></tr></thead><tbody><tr><td>All corruptions</td><td>0.777621</td><td>0.186762</td><td>0.731208</td><td>0.748215</td><td>0.719606</td><td>0.769880</td><td>0.027936</td><td>0.729321</td><td>0.785784</td><td>0.704836</td></tr><tr><td>Emoji Removal</td><td>0.796622</td><td>0.169403</td><td>0.759471</td><td>0.765310</td><td>0.754525</td><td>0.788177</td><td>0.044574</td><td>0.754264</td><td>0.799723</td><td>0.730673</td></tr><tr><td>Hashtag Splitting</td><td>0.797326</td><td>0.169666</td><td>0.758076</td><td>0.767174</td><td>0.751265</td><td>0.790289</td><td>0.049607</td><td>0.750437</td><td>0.804039</td><td>0.727826</td></tr><tr><td>Typos</td><td>0.774806</td><td>0.192172</td><td>0.735679</td><td>0.750336</td><td>0.726397</td><td>0.762139</td><td>0.032455</td><td>0.719843</td><td>0.767177</td><td>0.700259</td></tr><tr><td>Baseline</td><td>0.798030</td><td>0.169843</td><td>0.761196</td><td>0.767879</td><td>0.756296</td><td>0.788881</td><td>0.042115</td><td>0.750644</td><td>0.799548</td><td>0.728545</td></tr><tr><td>All Domain Shifts</td><td>0.798030</td><td>0.169843</td><td>0.761196</td><td>0.767879</td><td>0.756296</td><td>0.788881</td><td>0.042115</td><td>0.750644</td><td>0.799548</td><td>0.728545</td></tr><tr><td>No Hashtags</td><td>0.779412</td><td>0.183594</td><td>0.729214</td><td>0.740608</td><td>0.721849</td><td>0.783422</td><td>0.055099</td><td>0.730822</td><td>0.795115</td><td>0.706223</td></tr><tr><td>No HTTP Links</td><td>0.798030</td><td>0.169843</td><td>0.761196</td><td>0.767879</td><td>0.756296</td><td>0.788881</td><td>0.042115</td><td>0.750644</td><td>0.799548</td><td>0.728545</td></tr><tr><td>No @ Mentions</td><td>0.786865</td><td>0.178595</td><td>0.764952</td><td>0.763810</td><td>0.766616</td><td>0.788104</td><td>0.041246</td><td>0.763955</td><td>0.796607</td><td>0.749939</td></tr></tbody></table><figcaption>All corruption ablations and domain shifting ablations. While typos and corruption_all impact base model’s accuracy (0.77), the distilroberta model maintains higher calibration.</figcaption></figure>
+<h2 id="error-analysis-sec">Error Analysis {#sec<div></div>}</h2>
+<p>8 Missclassified samples from both models can be seen in Appendix \ref{sec</p><div></div>}. We can see how misspellings, such as “Deppression”, cause unrecognizable token fragments ’#’, ‘de’, ‘##pp’, ‘##ress’, ‘##ion’. These can’t be clearly mapped to any particular emotional state, and may be unrecognizable from the pre-trained vocabulary.<p></p>
+<p>For misspellings, we would need to implement character-level data augmentation to simulate typos. We would inject random character insertions, deletions, and keyboard-distance typos, especially targetting emotional keywords. By forcing the model to see misspelled variants, we train the attention heads to recognize the pattern of the fragments. This may improve the score.</p>
+<p>Other missclassified sentences have words that seem semantically biased for one class, where subtle, but important tokens change the meaning significantly. For example, both tokenizers correctly break down “revolting”, but neither model can weigh “i am” enough to overcome the “angry” connotations and classifications. Thus “i am revolting” is missclassified as “angry”.</p>
+<p>In order to counteract this, we need to increase our training samples or introduce more robust data augmentation to increase the semantic representation and understanding for our models. The best technique in this case would be Counterfactual data augmentation (CDA), where we generate more samples consisting of the word “revolting” in all scenarios, and thus we can diversify the model’s interpretation of “revolting” across a greater number of samples and classes.</p>
+<h2 id="open-source-and-closed-models-sec">Open Source and Closed Models {#sec<div></div>}</h2>
+<p>We evaluated two LLM models, Qwen3-4B-Instruct-2507 and GPT 4o-mini, on prompts from Appendix \ref{sec</p><div></div>} and Appendix \ref{sec<div></div>}. They achieved SOTA results without manual tuning, and responses aligned with the distribution of the training data.<p></p>
+<p>A structured result demonstrated greater performance in all metrics over minimal prompts, except on throughput for Qwen. Longer prompts tap further into the parametric memory of models, they can elicit the pre-trained memory to produce more aligned responses. Our longer prompt thus increased the statistical chances of the model producing accurate emotion-classification assessment. Without such context priming, the model is not parametrically activated in the same specialized manner, and thus was more unlikely to produce an aligned response.</p>
+<p>The final results for each tested model has been collected and summarized in Table \ref{tbl</p><div></div>}.<p></p><div id="refs" class="references csl-bib-body">
+  <div class="csl-entry" id="bib-barbieri2020tweetevalunifiedbenchmarkcomparative">
+    <div class="csl-left-margin">[1]</div><div class="csl-right-inline">F. Barbieri, J. Camacho-Collados, L. Neves, and L. Espinosa-Anke, “TweetEval: Unified Benchmark and Comparative Evaluation for Tweet Classification.” 2020. [Online]. Available: https://arxiv.org/abs/2010.12421</div>
+  </div>
+  <div class="csl-entry" id="bib-nguyen-etal-2020-bertweet">
+    <div class="csl-left-margin">[2]</div><div class="csl-right-inline">D. Q. Nguyen, T. Vu, and A. Tuan Nguyen, “BERTweet: A pre-trained language model for English Tweets,” in <i>Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing: System Demonstrations</i>, Q. Liu and D. Schlangen, Eds., Online: Association for Computational Linguistics, Oct. 2020, pp. 9–14. doi: 10.18653/v1/2020.emnlp-demos.2.</div>
+  </div>
+  <div class="csl-entry" id="bib-loureiro2022timelmsdiachroniclanguagemodels">
+    <div class="csl-left-margin">[3]</div><div class="csl-right-inline">D. Loureiro, F. Barbieri, L. Neves, L. E. Anke, and J. Camacho-Collados, “TimeLMs: Diachronic Language Models from Twitter.” 2022. [Online]. Available: https://arxiv.org/abs/2202.03829</div>
+  </div>
+  <div class="csl-entry" id="bib-antypas2023supertweetevalchallengingunifiedheterogeneous">
+    <div class="csl-left-margin">[4]</div><div class="csl-right-inline">D. Antypas <i>et al.</i>, “SuperTweetEval: A Challenging, Unified and Heterogeneous Benchmark for Social Media NLP Research.” 2023. [Online]. Available: https://arxiv.org/abs/2310.14757</div>
+  </div>
+  <div class="csl-entry" id="bib-wei2019edaeasydataaugmentation">
+    <div class="csl-left-margin">[5]</div><div class="csl-right-inline">J. Wei and K. Zou, “EDA: Easy Data Augmentation Techniques for Boosting Performance on Text Classification Tasks.” 2019. [Online]. Available: https://arxiv.org/abs/1901.11196</div>
+  </div>
+  <div class="csl-entry" id="bib-edunov2018understandingbacktranslationscale">
+    <div class="csl-left-margin">[6]</div><div class="csl-right-inline">S. Edunov, M. Ott, M. Auli, and D. Grangier, “Understanding Back-Translation at Scale.” 2018. [Online]. Available: https://arxiv.org/abs/1808.09381</div>
+  </div>
+  <div class="csl-entry" id="bib-sun2020mixuptransformerdynamicdataaugmentation">
+    <div class="csl-left-margin">[7]</div><div class="csl-right-inline">L. Sun, C. Xia, W. Yin, T. Liang, P. S. Yu, and L. He, “Mixup-Transformer: Dynamic Data Augmentation for NLP Tasks.” 2020. [Online]. Available: https://arxiv.org/abs/2010.02394</div>
+  </div>
+</div> </div>  </main> <script type="module">var p={inline:["$","$"],display:["$$","$$"]};function c(a,t){t===void 0&&(t=p);for(var o=a.querySelectorAll(".katex-mathml + .katex-html"),n=0;n<o.length;n++){var r=o[n];r.remove?r.remove():r.parentNode&&r.parentNode.removeChild(r)}for(var d=a.querySelectorAll(".katex-mathml"),i=0;i<d.length;i++){var l=d[i],e=l.querySelector("annotation");e&&(l.replaceWith?l.replaceWith(e):l.parentNode&&l.parentNode.replaceChild(e,l),e.innerHTML=t.inline[0]+e.innerHTML+t.inline[1])}for(var f=a.querySelectorAll(".katex-display annotation"),v=0;v<f.length;v++){var s=f[v];s.innerHTML=t.display[0]+s.innerHTML.substr(t.inline[0].length,s.innerHTML.length-t.inline[0].length-t.inline[1].length)+t.display[1]}return a}function h(a){var t=a instanceof Element?a:a.parentElement;return t&&t.closest(".katex")}document.addEventListener("copy",function(a){var t=window.getSelection();if(!(t.isCollapsed||!a.clipboardData)){var o=a.clipboardData,n=t.getRangeAt(0),r=h(n.startContainer);r&&n.setStartBefore(r);var d=h(n.endContainer);d&&n.setEndAfter(d);var i=n.cloneContents();if(i.querySelector(".katex-mathml")){var l=Array.prototype.map.call(i.childNodes,e=>e instanceof Text?e.textContent:e.outerHTML).join("");o.setData("text/html",l),o.setData("text/plain",c(i).textContent),a.preventDefault()}}});</script> </body> </html>

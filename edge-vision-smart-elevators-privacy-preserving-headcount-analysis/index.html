@@ -1,0 +1,920 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Edge-Vision for Smart Elevators: Privacy-Preserving Headcount Analysis | bence</title><!-- SEO --><meta name="description" content="We use the Nuvoton M55M1 and its Ethos-U55 NPU, the system to run optimized ML models directly on the device. We convert a top-down camera feed into a digital count without the latency or cost of cloud processing."><link rel="canonical" href="https://bencejdanko.github.io/edge-vision-smart-elevators-privacy-preserving-headcount-analysis/"><link rel="sitemap" href="/sitemap-index.xml"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://bencejdanko.github.io/edge-vision-smart-elevators-privacy-preserving-headcount-analysis/"><meta property="og:title" content="Edge-Vision for Smart Elevators: Privacy-Preserving Headcount Analysis | bence"><meta property="og:description" content="We use the Nuvoton M55M1 and its Ethos-U55 NPU, the system to run optimized ML models directly on the device. We convert a top-down camera feed into a digital count without the latency or cost of cloud processing."><!-- Twitter --><meta property="twitter:card" content="summary"><meta property="twitter:url" content="https://bencejdanko.github.io/edge-vision-smart-elevators-privacy-preserving-headcount-analysis/"><meta property="twitter:title" content="Edge-Vision for Smart Elevators: Privacy-Preserving Headcount Analysis | bence"><meta property="twitter:description" content="We use the Nuvoton M55M1 and its Ethos-U55 NPU, the system to run optimized ML models directly on the device. We convert a top-down camera feed into a digital count without the latency or cost of cloud processing."><!-- Pagefind Search --><link href="/pagefind/pagefind-ui.css" rel="stylesheet"><script src="/pagefind/pagefind-ui.js"></script><link rel="stylesheet" href="/_astro/_slug_.BC6mtDjz.css">
+<style>.toc-list[data-astro-cid-xvrfupwn]{list-style:none;margin:0;padding:0;display:grid;gap:.25rem}
+</style><script type="module" src="/_astro/page.BBjLP_j2.js"></script>
+<script>
+          (function() {
+            if (!document.querySelector('link[href*="tldraw.css"]')) {
+              const link = document.createElement('link');
+              link.rel = 'stylesheet';
+              link.href = 'https://unpkg.com/tldraw@3.15.6/tldraw.css';
+              document.head.appendChild(link);
+            }
+          })();
+        </script></head> <body class="min-h-screen flex justify-center bg-white"> <main class="prose w-full py-10 max-w-2xl max-w-2xl relative" data-pagefind-body> <div id="search" class="not-prose mb-6 min-h-[40px]" data-pagefind-ignore></div> <script>
+        window.addEventListener('DOMContentLoaded', (event) => {
+          if (typeof PagefindUI !== 'undefined') {
+            new PagefindUI({ 
+              element: "#search", 
+              showSubResults: true,
+              showImages: false,
+              resetStyles: false,
+              translations: {
+                placeholder: "bencejdanko"
+              }
+            });
+          }
+        });
+      </script> <nav class="not-prose mb-8 font-sans" data-pagefind-ignore> <ul class="flex gap-4 list-none p-0"> <li> <a href="/sitemap-0.xml" class="text-sm text-black no-underline border-b-2 border-transparent hover:border-black pb-0.5" aria-label="Sitemap"> <span class="icon-[mdi--sitemap] inline-block align-middle"></span> </a> </li> <li> <a href="/" class="text-sm text-black no-underline border-b-2 border-transparent hover:border-black pb-0.5"> home </a> </li><li> <a href="/projects" class="text-sm text-black no-underline border-b-2 border-transparent hover:border-black pb-0.5"> projects </a> </li><li> <a href="/glossary" class="text-sm text-black no-underline border-b-2 border-transparent hover:border-black pb-0.5"> glossary </a> </li><li> <a href="/photography" class="text-sm text-black no-underline border-b-2 border-transparent hover:border-black pb-0.5"> photography </a> </li> </ul> </nav> <h1>Edge-Vision for Smart Elevators: Privacy-Preserving Headcount Analysis</h1> <div class="mb-4 text-black text-lg"> We use the Nuvoton M55M1 and its Ethos-U55 NPU, the system to run optimized ML models directly on the device. We convert a top-down camera feed into a digital count without the latency or cost of cloud processing. </div> <div class="text-sm text-gray-600"> <span> Bence Jordan Dankó  </span> </div><div class="text-sm">
+Last updated March 18, 2026  at 7:00 PM </div> <div class="mt-2 flex flex-wrap gap-x-2 font-sans font-bold"> <span class="italic">Index Terms: </span> <span>Edge AI</span><span>YOLO-v8-nano</span><span>Data collection</span> </div><div class="drop-cap"> <div class="tldraw-astro-island not-prose" data-tldraw-src="./diagram.tldr" data-tldraw-data="{
+  &#x22;document&#x22;: {
+    &#x22;store&#x22;: {
+      &#x22;shape:fbZ58VamYU2KO_UeyQMoj&#x22;: {
+        &#x22;x&#x22;: 453.74433103896496,
+        &#x22;y&#x22;: 235.44931262352645,
+        &#x22;rotation&#x22;: 0,
+        &#x22;isLocked&#x22;: false,
+        &#x22;opacity&#x22;: 1,
+        &#x22;meta&#x22;: {},
+        &#x22;id&#x22;: &#x22;shape:fbZ58VamYU2KO_UeyQMoj&#x22;,
+        &#x22;type&#x22;: &#x22;geo&#x22;,
+        &#x22;props&#x22;: {
+          &#x22;w&#x22;: 206.6010262635636,
+          &#x22;h&#x22;: 164.59212990676247,
+          &#x22;geo&#x22;: &#x22;rectangle&#x22;,
+          &#x22;dash&#x22;: &#x22;draw&#x22;,
+          &#x22;growY&#x22;: 0,
+          &#x22;url&#x22;: &#x22;&#x22;,
+          &#x22;scale&#x22;: 1,
+          &#x22;color&#x22;: &#x22;black&#x22;,
+          &#x22;labelColor&#x22;: &#x22;black&#x22;,
+          &#x22;fill&#x22;: &#x22;none&#x22;,
+          &#x22;size&#x22;: &#x22;m&#x22;,
+          &#x22;font&#x22;: &#x22;sans&#x22;,
+          &#x22;align&#x22;: &#x22;middle&#x22;,
+          &#x22;verticalAlign&#x22;: &#x22;middle&#x22;,
+          &#x22;richText&#x22;: {
+            &#x22;type&#x22;: &#x22;doc&#x22;,
+            &#x22;content&#x22;: [
+              {
+                &#x22;type&#x22;: &#x22;paragraph&#x22;,
+                &#x22;attrs&#x22;: {
+                  &#x22;dir&#x22;: &#x22;auto&#x22;
+                },
+                &#x22;content&#x22;: [
+                  {
+                    &#x22;type&#x22;: &#x22;text&#x22;,
+                    &#x22;text&#x22;: &#x22;YOLO-v8n&#x22;
+                  }
+                ]
+              },
+              {
+                &#x22;type&#x22;: &#x22;paragraph&#x22;,
+                &#x22;attrs&#x22;: {
+                  &#x22;dir&#x22;: &#x22;auto&#x22;
+                },
+                &#x22;content&#x22;: [
+                  {
+                    &#x22;type&#x22;: &#x22;text&#x22;,
+                    &#x22;text&#x22;: &#x22;Architecture&#x22;
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        &#x22;parentId&#x22;: &#x22;page:page&#x22;,
+        &#x22;index&#x22;: &#x22;aL8Cq&#x22;,
+        &#x22;typeName&#x22;: &#x22;shape&#x22;
+      },
+      &#x22;shape:9aKCi1BAHXuTFr7LRIMNJ&#x22;: {
+        &#x22;x&#x22;: 280.2203652932013,
+        &#x22;y&#x22;: 55.476721809247294,
+        &#x22;rotation&#x22;: 0,
+        &#x22;isLocked&#x22;: false,
+        &#x22;opacity&#x22;: 1,
+        &#x22;meta&#x22;: {},
+        &#x22;id&#x22;: &#x22;shape:9aKCi1BAHXuTFr7LRIMNJ&#x22;,
+        &#x22;type&#x22;: &#x22;arrow&#x22;,
+        &#x22;props&#x22;: {
+          &#x22;kind&#x22;: &#x22;arc&#x22;,
+          &#x22;elbowMidPoint&#x22;: 0.5,
+          &#x22;dash&#x22;: &#x22;draw&#x22;,
+          &#x22;size&#x22;: &#x22;m&#x22;,
+          &#x22;fill&#x22;: &#x22;none&#x22;,
+          &#x22;color&#x22;: &#x22;black&#x22;,
+          &#x22;labelColor&#x22;: &#x22;black&#x22;,
+          &#x22;bend&#x22;: 0,
+          &#x22;start&#x22;: {
+            &#x22;x&#x22;: 23.775262169612347,
+            &#x22;y&#x22;: -1.9812416156584618
+          },
+          &#x22;end&#x22;: {
+            &#x22;x&#x22;: 210.01481583157613,
+            &#x22;y&#x22;: -1.9812718474676672
+          },
+          &#x22;arrowheadStart&#x22;: &#x22;none&#x22;,
+          &#x22;arrowheadEnd&#x22;: &#x22;arrow&#x22;,
+          &#x22;text&#x22;: &#x22;&#x22;,
+          &#x22;labelPosition&#x22;: 0.5,
+          &#x22;font&#x22;: &#x22;sans&#x22;,
+          &#x22;scale&#x22;: 1
+        },
+        &#x22;parentId&#x22;: &#x22;page:page&#x22;,
+        &#x22;index&#x22;: &#x22;aG1MN&#x22;,
+        &#x22;typeName&#x22;: &#x22;shape&#x22;
+      },
+      &#x22;shape:YuVnEbgpfdlPSgEV3e0mL&#x22;: {
+        &#x22;x&#x22;: 101.9059292529177,
+        &#x22;y&#x22;: 68.33752817476261,
+        &#x22;rotation&#x22;: 0,
+        &#x22;isLocked&#x22;: false,
+        &#x22;opacity&#x22;: 1,
+        &#x22;meta&#x22;: {},
+        &#x22;id&#x22;: &#x22;shape:YuVnEbgpfdlPSgEV3e0mL&#x22;,
+        &#x22;type&#x22;: &#x22;text&#x22;,
+        &#x22;props&#x22;: {
+          &#x22;color&#x22;: &#x22;black&#x22;,
+          &#x22;size&#x22;: &#x22;m&#x22;,
+          &#x22;w&#x22;: 164.28125,
+          &#x22;font&#x22;: &#x22;sans&#x22;,
+          &#x22;textAlign&#x22;: &#x22;middle&#x22;,
+          &#x22;autoSize&#x22;: true,
+          &#x22;scale&#x22;: 1,
+          &#x22;richText&#x22;: {
+            &#x22;type&#x22;: &#x22;doc&#x22;,
+            &#x22;content&#x22;: [
+              {
+                &#x22;type&#x22;: &#x22;paragraph&#x22;,
+                &#x22;attrs&#x22;: {
+                  &#x22;dir&#x22;: &#x22;auto&#x22;
+                },
+                &#x22;content&#x22;: [
+                  {
+                    &#x22;type&#x22;: &#x22;text&#x22;,
+                    &#x22;text&#x22;: &#x22;Roboflow&#x22;
+                  }
+                ]
+              },
+              {
+                &#x22;type&#x22;: &#x22;paragraph&#x22;,
+                &#x22;attrs&#x22;: {
+                  &#x22;dir&#x22;: &#x22;auto&#x22;
+                },
+                &#x22;content&#x22;: [
+                  {
+                    &#x22;type&#x22;: &#x22;text&#x22;,
+                    &#x22;text&#x22;: &#x22;13,400 images&#x22;
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        &#x22;parentId&#x22;: &#x22;page:page&#x22;,
+        &#x22;index&#x22;: &#x22;aF9je&#x22;,
+        &#x22;typeName&#x22;: &#x22;shape&#x22;
+      },
+      &#x22;asset:-148548480&#x22;: {
+        &#x22;meta&#x22;: {},
+        &#x22;id&#x22;: &#x22;asset:-148548480&#x22;,
+        &#x22;type&#x22;: &#x22;image&#x22;,
+        &#x22;typeName&#x22;: &#x22;asset&#x22;,
+        &#x22;props&#x22;: {
+          &#x22;name&#x22;: &#x22;asset.svg&#x22;,
+          &#x22;src&#x22;: &#x22;data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDQ4IDQ4Ij48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI0Ij48cGF0aCBkPSJNNDQgMTF2MjdjMCAzLjMxNC04Ljk1NCA2LTIwIDZTNCA0MS4zMTQgNCAzOFYxMSIvPjxwYXRoIGQ9Ik00NCAyOWMwIDMuMzE0LTguOTU0IDYtMjAgNlM0IDMyLjMxNCA0IDI5bTQwLTljMCAzLjMxNC04Ljk1NCA2LTIwIDZTNCAyMy4zMTQgNCAyMCIvPjxlbGxpcHNlIGN4PSIyNCIgY3k9IjEwIiBmaWxsPSIjMDAwMDAwIiByeD0iMjAiIHJ5PSI2Ii8+PC9nPjwvc3ZnPg==&#x22;,
+          &#x22;w&#x22;: 64,
+          &#x22;h&#x22;: 64,
+          &#x22;fileSize&#x22;: 397,
+          &#x22;mimeType&#x22;: &#x22;image/svg+xml&#x22;,
+          &#x22;isAnimated&#x22;: false
+        }
+      },
+      &#x22;asset:191386735&#x22;: {
+        &#x22;meta&#x22;: {},
+        &#x22;id&#x22;: &#x22;asset:191386735&#x22;,
+        &#x22;type&#x22;: &#x22;image&#x22;,
+        &#x22;typeName&#x22;: &#x22;asset&#x22;,
+        &#x22;props&#x22;: {
+          &#x22;name&#x22;: &#x22;asset.svg&#x22;,
+          &#x22;src&#x22;: &#x22;data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSIjMDAwMDAwIiBkPSJNMTQuNTcgMTYuODJ2LS4wMmMwLTEuMjMtMS4wOS0yLjIyLTIuNDItMi4yMWMtMS4zMyAwLTIuNCAxLjAxLTIuNCAyLjIzdi4wMmMwIDEuMjMgMS4wOSAyLjIyIDIuNDIgMi4yMWMxLjMzIDAgMi40LTEuMDEgMi40LTIuMjNtLTMuODEtNi4zNGMtMS0uNjUtMi40NC0uMjMtMy4yMS45NGMtLjc4IDEuMTgtLjYgMi42Ni40IDMuMzFzMi40NC4yMyAzLjIxLS45NGMuNzgtMS4xOC42LTIuNjYtLjQtMy4zMW0yLjctLjEyYy0xIC42NS0xLjE4IDIuMTQtLjQgMy4zMWMuNzggMS4xOCAyLjIyIDEuNiAzLjIxLjk0YzEtLjY1IDEuMTgtMi4xNC40LTMuMzFjLS43OC0xLjE4LTIuMjItMS42LTMuMjEtLjk0bS03LjY5IDEuMThjLTEuNzkgMS4wMi0xLjQ4IDMuMy0uNTEgNC4wN2MuODguMzkgMS41OS00LjM2LjUxLTQuMDdtMTIuNDYtLjA1Yy0xLjA4LS4yOS0uMzYgNC40Ni41MSA0LjA3Yy45Ny0uNzggMS4yOC0zLjA1LS41MS00LjA3bS0zLjY2LTMuNTRjLS42OS4xMiAzLjI5IDMuNTggMy4zNSAyLjgxYy4wNi0yLjAyLTEuNDktMy4xMi0zLjM1LTIuODFtLTUuMTQtLjA2Yy0xLjg2LS4zMS0zLjQxLjc5LTMuMzUgMi44MWMuMDYuNzcgNC4wMy0yLjY5IDMuMzUtMi44MW0yLjY3LS40N2MtMS4xMS0uMDMtMi4xOC44Mi0yLjE4IDEuMzJjMCAuNi44OCAxLjIyIDIuMTkgMS4yM2MxLjM0IDAgMi4xOS0uNDkgMi4xOS0xLjExYzAtLjctMS4yMi0xLjQ1LTIuMi0xLjQ0bS4wNyAxMi4zM2MtLjk2LS4wMi0yLjQ0LjM5LTIuNDIuOTFjLS4wMi4zNiAxLjE2IDEuMzkgMi4zNiAxLjM0YzEuMTYuMDIgMi4zNS0xLjAxIDIuMzMtMS40N2MwLS40Ny0xLjMtLjgyLTIuMjctLjc4bS0zLjU4LTIuNzhjLS43OS0uOTItMS44Mi0xLjQ3LTIuNDgtMS4wNmMtLjQ1LjM0LS41MyAxLjQ5LjExIDIuNjJjLjk0IDEuMzUgMi4yNiAxLjQ5IDIuODEgMS4xNmMuNTgtLjQzLjI2LTEuODktLjQzLTIuNzJabTcuMDEtLjI3Yy0uNzUuODctMS4xNiAyLjQ3LS42MiAyLjk4Yy41Mi40IDEuOTIuMzQgMi45NS0xLjA5Yy43NS0uOTYuNS0yLjU3LjA3LTIuOTljLS42NC0uNDktMS41NS4xNC0yLjQgMS4xTTYuNzkgMy40M2MxLjU3LjUzIDIuOTggMS4yNCA0LjE2IDIuMjJjMS4zOS0uNjYuNDMtMi4zMS0uMjUtMi45N2MtLjAzLjE3LS4wNy4yOC0uMTIuMzJjLS4yMi0uMjQtLjQtLjQ5LS42OS0uNzJjMCAuMTQuMDcuMjgtLjEuMzljLS4xNS0uMjEtLjM2LS4zOS0uNjMtLjU1Yy4xMy4yMy4wMi4zLS4wNS40Yy0uMjEtLjE4LS40MS0uMzctLjc5LS41MWMuMTEuMTMuMjUuMjYuMS40MWMtLjIxLS4xNC0uNDMtLjI3LS45NC0uMzdjLjEyLjEzLjM1LjI2LjIxLjM5Yy0uMjctLjEtLjU3LS4xOC0uOS0uMjNjLjE2LjEzLjI5LjI2LjE2LjM2Yy0uMjktLjA5LS42OS0uMjEtMS4wOC0uMTFsLjI1LjI1cy0uNTguMDMtLjk3LjAzYy4xNS4yMS4yOS40LjM4Ljc2Yy0uMDQuMDQtLjI0LjAyLS40MiAwYy4xOS40MS41Mi41MS42LjY4Yy0uMTIuMDktLjI4LjA3LS40NiAwYy4xNC4yOS40My40OC42NS43MmMtLjA2LjA0LS4xNi4wNy0uNC4wNGMuMjEuMjMuNDYuNDMuNzcuNjJjLS4wNS4wNi0uMjQuMDYtLjQxLjA2Yy4yNy4yNy42Mi40MS45NS41OWMtLjE2LjExLS4yOC4wOS0uNDEuMDljLjIzLjE5LjYzLjMgMSAuNDFjLS4wNy4xMS0uMTQuMTQtLjI5LjE3Yy4zOS4yMi45NS4xMiAxLjEuMjNjLS4wNC4xMS0uMTQuMTgtLjI3LjI0Yy42My4wNCAyLjM0LS4wMiAyLjY3LTEuMzRjLS42NC0uNzItMS44MS0xLjU1LTMuODItMi41OVptMTAuNjggMGMtMi4wMSAxLjA0LTMuMTggMS44OC0zLjgyIDIuNTljLjMzIDEuMzIgMi4wNCAxLjM4IDIuNjcgMS4zNGMtLjEzLS4wNi0uMjQtLjEzLS4yNy0uMjRjLjE2LS4xMS43MS0uMDEgMS4xLS4yM2MtLjE1LS4wMy0uMjItLjA2LS4yOS0uMTdjLjM3LS4xMi43Ni0uMjIgMS0uNDFjLS4xMyAwLS4yNC4wMy0uNDEtLjA5Yy4zMy0uMTguNjgtLjMyLjk1LS41OWMtLjE3IDAtLjM1IDAtLjQxLS4wNmMuMy0uMTkuNTYtLjM5Ljc3LS42MmMtLjI0LjAzLS4zNCAwLS40LS4wNGMuMjMtLjIzLjUyLS40My42NS0uNzJjLS4xOC4wNi0uMzQuMDgtLjQ2IDBjLjA4LS4xNy40MS0uMjguNi0uNjhjLS4xOS4wMi0uMzguMDQtLjQyIDBjLjA5LS4zNS4yMy0uNTUuMzgtLjc2Yy0uNCAwLTEgMC0uOTgtLjAzbC4yNS0uMjVjLS4zOS0uMS0uNzkuMDItMS4wOC4xMWMtLjEzLS4xIDAtLjIzLjE2LS4zNmMtLjMzLjA0LS42My4xMi0uOS4yMmMtLjE0LS4xMy4wOS0uMjYuMjEtLjM5Yy0uNTEuMS0uNzMuMjMtLjk0LjM3Yy0uMTYtLjE1IDAtLjI4LjEtLjQxYy0uMzkuMTQtLjU4LjMzLS43OS41MWMtLjA3LS4xLS4xOC0uMTctLjA1LS40Yy0uMjcuMTYtLjQ4LjM0LS42My41NWMtLjE3LS4xMS0uMS0uMjUtLjEtLjM5Yy0uMjguMjMtLjQ3LjQ4LS42OS43MmMtLjA0LS4wMy0uMDgtLjE0LS4xMi0uMzJjLS42OC42Ni0xLjY0IDIuMzEtLjI1IDIuOTdjMS4xOC0uOTggMi41OS0xLjY4IDQuMTYtMi4yMloiLz48L3N2Zz4=&#x22;,
+          &#x22;w&#x22;: 64,
+          &#x22;h&#x22;: 64,
+          &#x22;fileSize&#x22;: 2579,
+          &#x22;mimeType&#x22;: &#x22;image/svg+xml&#x22;,
+          &#x22;isAnimated&#x22;: false
+        }
+      },
+      &#x22;shape:S4Z7guNNQiN70GvLd7xCY&#x22;: {
+        &#x22;x&#x22;: 102.3772578102774,
+        &#x22;y&#x22;: -167.29424309723802,
+        &#x22;rotation&#x22;: 0,
+        &#x22;isLocked&#x22;: false,
+        &#x22;opacity&#x22;: 1,
+        &#x22;meta&#x22;: {},
+        &#x22;id&#x22;: &#x22;shape:S4Z7guNNQiN70GvLd7xCY&#x22;,
+        &#x22;type&#x22;: &#x22;image&#x22;,
+        &#x22;props&#x22;: {
+          &#x22;w&#x22;: 64,
+          &#x22;h&#x22;: 64,
+          &#x22;assetId&#x22;: &#x22;asset:191386735&#x22;,
+          &#x22;playing&#x22;: true,
+          &#x22;url&#x22;: &#x22;&#x22;,
+          &#x22;crop&#x22;: null,
+          &#x22;flipX&#x22;: false,
+          &#x22;flipY&#x22;: false,
+          &#x22;altText&#x22;: &#x22;&#x22;
+        },
+        &#x22;parentId&#x22;: &#x22;page:page&#x22;,
+        &#x22;index&#x22;: &#x22;aA2Ao&#x22;,
+        &#x22;typeName&#x22;: &#x22;shape&#x22;
+      },
+      &#x22;shape:CK5EQ3iMERLTz-lGgtkoT&#x22;: {
+        &#x22;x&#x22;: 125.95206748566974,
+        &#x22;y&#x22;: 290.6211916898594,
+        &#x22;rotation&#x22;: 0,
+        &#x22;isLocked&#x22;: false,
+        &#x22;opacity&#x22;: 1,
+        &#x22;meta&#x22;: {},
+        &#x22;id&#x22;: &#x22;shape:CK5EQ3iMERLTz-lGgtkoT&#x22;,
+        &#x22;type&#x22;: &#x22;geo&#x22;,
+        &#x22;props&#x22;: {
+          &#x22;w&#x22;: 116.66670227050781,
+          &#x22;h&#x22;: 63.0312614440918,
+          &#x22;geo&#x22;: &#x22;rectangle&#x22;,
+          &#x22;dash&#x22;: &#x22;solid&#x22;,
+          &#x22;growY&#x22;: 0,
+          &#x22;url&#x22;: &#x22;&#x22;,
+          &#x22;scale&#x22;: 1,
+          &#x22;color&#x22;: &#x22;black&#x22;,
+          &#x22;labelColor&#x22;: &#x22;black&#x22;,
+          &#x22;fill&#x22;: &#x22;none&#x22;,
+          &#x22;size&#x22;: &#x22;m&#x22;,
+          &#x22;font&#x22;: &#x22;sans&#x22;,
+          &#x22;align&#x22;: &#x22;middle&#x22;,
+          &#x22;verticalAlign&#x22;: &#x22;middle&#x22;,
+          &#x22;richText&#x22;: {
+            &#x22;type&#x22;: &#x22;doc&#x22;,
+            &#x22;content&#x22;: [
+              {
+                &#x22;type&#x22;: &#x22;paragraph&#x22;,
+                &#x22;attrs&#x22;: {
+                  &#x22;dir&#x22;: &#x22;auto&#x22;
+                }
+              }
+            ]
+          }
+        },
+        &#x22;parentId&#x22;: &#x22;page:page&#x22;,
+        &#x22;index&#x22;: &#x22;a1&#x22;,
+        &#x22;typeName&#x22;: &#x22;shape&#x22;
+      },
+      &#x22;shape:ai9rEp-1H4r4j4pW7cfVn&#x22;: {
+        &#x22;x&#x22;: 143.95206748566974,
+        &#x22;y&#x22;: 275.6211916898594,
+        &#x22;rotation&#x22;: 0,
+        &#x22;isLocked&#x22;: false,
+        &#x22;opacity&#x22;: 1,
+        &#x22;meta&#x22;: {},
+        &#x22;id&#x22;: &#x22;shape:ai9rEp-1H4r4j4pW7cfVn&#x22;,
+        &#x22;type&#x22;: &#x22;geo&#x22;,
+        &#x22;props&#x22;: {
+          &#x22;w&#x22;: 116.66670227050781,
+          &#x22;h&#x22;: 63.0312614440918,
+          &#x22;geo&#x22;: &#x22;rectangle&#x22;,
+          &#x22;dash&#x22;: &#x22;solid&#x22;,
+          &#x22;growY&#x22;: 0,
+          &#x22;url&#x22;: &#x22;&#x22;,
+          &#x22;scale&#x22;: 1,
+          &#x22;color&#x22;: &#x22;black&#x22;,
+          &#x22;labelColor&#x22;: &#x22;black&#x22;,
+          &#x22;fill&#x22;: &#x22;none&#x22;,
+          &#x22;size&#x22;: &#x22;m&#x22;,
+          &#x22;font&#x22;: &#x22;sans&#x22;,
+          &#x22;align&#x22;: &#x22;middle&#x22;,
+          &#x22;verticalAlign&#x22;: &#x22;middle&#x22;,
+          &#x22;richText&#x22;: {
+            &#x22;type&#x22;: &#x22;doc&#x22;,
+            &#x22;content&#x22;: [
+              {
+                &#x22;type&#x22;: &#x22;paragraph&#x22;,
+                &#x22;attrs&#x22;: {
+                  &#x22;dir&#x22;: &#x22;auto&#x22;
+                }
+              }
+            ]
+          }
+        },
+        &#x22;parentId&#x22;: &#x22;page:page&#x22;,
+        &#x22;index&#x22;: &#x22;a49vm&#x22;,
+        &#x22;typeName&#x22;: &#x22;shape&#x22;
+      },
+      &#x22;shape:7V2hrY30BPJmIGg3gSFLj&#x22;: {
+        &#x22;x&#x22;: 147.8358847124257,
+        &#x22;y&#x22;: -10.865283237780545,
+        &#x22;rotation&#x22;: 0,
+        &#x22;isLocked&#x22;: false,
+        &#x22;opacity&#x22;: 1,
+        &#x22;meta&#x22;: {},
+        &#x22;id&#x22;: &#x22;shape:7V2hrY30BPJmIGg3gSFLj&#x22;,
+        &#x22;type&#x22;: &#x22;image&#x22;,
+        &#x22;props&#x22;: {
+          &#x22;w&#x22;: 64,
+          &#x22;h&#x22;: 64,
+          &#x22;assetId&#x22;: &#x22;asset:-148548480&#x22;,
+          &#x22;playing&#x22;: true,
+          &#x22;url&#x22;: &#x22;&#x22;,
+          &#x22;crop&#x22;: null,
+          &#x22;flipX&#x22;: false,
+          &#x22;flipY&#x22;: false,
+          &#x22;altText&#x22;: &#x22;&#x22;
+        },
+        &#x22;parentId&#x22;: &#x22;page:page&#x22;,
+        &#x22;index&#x22;: &#x22;aE4cI&#x22;,
+        &#x22;typeName&#x22;: &#x22;shape&#x22;
+      },
+      &#x22;asset:-1800455973&#x22;: {
+        &#x22;meta&#x22;: {},
+        &#x22;id&#x22;: &#x22;asset:-1800455973&#x22;,
+        &#x22;type&#x22;: &#x22;image&#x22;,
+        &#x22;typeName&#x22;: &#x22;asset&#x22;,
+        &#x22;props&#x22;: {
+          &#x22;name&#x22;: &#x22;asset.svg&#x22;,
+          &#x22;src&#x22;: &#x22;data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSIjMDAwMDAwIiBkPSJNNCA0aDNsMi0yaDZsMiAyaDNhMiAyIDAgMCAxIDIgMnYxMmEyIDIgMCAwIDEtMiAySDRhMiAyIDAgMCAxLTItMlY2YTIgMiAwIDAgMSAyLTJtOCAzYTUgNSAwIDAgMC01IDVhNSA1IDAgMCAwIDUgNWE1IDUgMCAwIDAgNS01YTUgNSAwIDAgMC01LTVtMCAyYTMgMyAwIDAgMSAzIDNhMyAzIDAgMCAxLTMgM2EzIDMgMCAwIDEtMy0zYTMgMyAwIDAgMSAzLTMiLz48L3N2Zz4=&#x22;,
+          &#x22;w&#x22;: 64,
+          &#x22;h&#x22;: 64,
+          &#x22;fileSize&#x22;: 317,
+          &#x22;mimeType&#x22;: &#x22;image/svg+xml&#x22;,
+          &#x22;isAnimated&#x22;: false
+        }
+      },
+      &#x22;binding:eMFe2w4LVVqe-L_nE_G6q&#x22;: {
+        &#x22;meta&#x22;: {},
+        &#x22;id&#x22;: &#x22;binding:eMFe2w4LVVqe-L_nE_G6q&#x22;,
+        &#x22;type&#x22;: &#x22;arrow&#x22;,
+        &#x22;fromId&#x22;: &#x22;shape:xqzH_ARzm7PerGlAVShSV&#x22;,
+        &#x22;toId&#x22;: &#x22;shape:fbZ58VamYU2KO_UeyQMoj&#x22;,
+        &#x22;props&#x22;: {
+          &#x22;isPrecise&#x22;: true,
+          &#x22;isExact&#x22;: false,
+          &#x22;normalizedAnchor&#x22;: {
+            &#x22;x&#x22;: 0.28352959961925983,
+            &#x22;y&#x22;: 0.49911209491814584
+          },
+          &#x22;snap&#x22;: &#x22;none&#x22;,
+          &#x22;terminal&#x22;: &#x22;end&#x22;
+        },
+        &#x22;typeName&#x22;: &#x22;binding&#x22;
+      },
+      &#x22;shape:x1fiAMkAj56hGykDXMa2S&#x22;: {
+        &#x22;x&#x22;: 103.285380473951,
+        &#x22;y&#x22;: 367.08999128092387,
+        &#x22;rotation&#x22;: 0,
+        &#x22;isLocked&#x22;: false,
+        &#x22;opacity&#x22;: 1,
+        &#x22;meta&#x22;: {},
+        &#x22;id&#x22;: &#x22;shape:x1fiAMkAj56hGykDXMa2S&#x22;,
+        &#x22;type&#x22;: &#x22;text&#x22;,
+        &#x22;props&#x22;: {
+          &#x22;color&#x22;: &#x22;black&#x22;,
+          &#x22;size&#x22;: &#x22;m&#x22;,
+          &#x22;w&#x22;: 150.83334350585938,
+          &#x22;font&#x22;: &#x22;sans&#x22;,
+          &#x22;textAlign&#x22;: &#x22;start&#x22;,
+          &#x22;autoSize&#x22;: true,
+          &#x22;scale&#x22;: 1,
+          &#x22;richText&#x22;: {
+            &#x22;type&#x22;: &#x22;doc&#x22;,
+            &#x22;content&#x22;: [
+              {
+                &#x22;type&#x22;: &#x22;paragraph&#x22;,
+                &#x22;attrs&#x22;: {
+                  &#x22;dir&#x22;: &#x22;auto&#x22;
+                },
+                &#x22;content&#x22;: [
+                  {
+                    &#x22;type&#x22;: &#x22;text&#x22;,
+                    &#x22;text&#x22;: &#x22;Video Frames&#x22;
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        &#x22;parentId&#x22;: &#x22;page:page&#x22;,
+        &#x22;index&#x22;: &#x22;a61Pg&#x22;,
+        &#x22;typeName&#x22;: &#x22;shape&#x22;
+      },
+      &#x22;shape:ceU5F2h1ytVV6zu0wh8gY&#x22;: {
+        &#x22;x&#x22;: 165.95206748566974,
+        &#x22;y&#x22;: 258.6211916898594,
+        &#x22;rotation&#x22;: 0,
+        &#x22;isLocked&#x22;: false,
+        &#x22;opacity&#x22;: 1,
+        &#x22;meta&#x22;: {},
+        &#x22;id&#x22;: &#x22;shape:ceU5F2h1ytVV6zu0wh8gY&#x22;,
+        &#x22;type&#x22;: &#x22;geo&#x22;,
+        &#x22;props&#x22;: {
+          &#x22;w&#x22;: 116.66670227050781,
+          &#x22;h&#x22;: 63.0312614440918,
+          &#x22;geo&#x22;: &#x22;rectangle&#x22;,
+          &#x22;dash&#x22;: &#x22;solid&#x22;,
+          &#x22;growY&#x22;: 0,
+          &#x22;url&#x22;: &#x22;&#x22;,
+          &#x22;scale&#x22;: 1,
+          &#x22;color&#x22;: &#x22;black&#x22;,
+          &#x22;labelColor&#x22;: &#x22;black&#x22;,
+          &#x22;fill&#x22;: &#x22;none&#x22;,
+          &#x22;size&#x22;: &#x22;m&#x22;,
+          &#x22;font&#x22;: &#x22;sans&#x22;,
+          &#x22;align&#x22;: &#x22;middle&#x22;,
+          &#x22;verticalAlign&#x22;: &#x22;middle&#x22;,
+          &#x22;richText&#x22;: {
+            &#x22;type&#x22;: &#x22;doc&#x22;,
+            &#x22;content&#x22;: [
+              {
+                &#x22;type&#x22;: &#x22;paragraph&#x22;,
+                &#x22;attrs&#x22;: {
+                  &#x22;dir&#x22;: &#x22;auto&#x22;
+                }
+              }
+            ]
+          }
+        },
+        &#x22;parentId&#x22;: &#x22;page:page&#x22;,
+        &#x22;index&#x22;: &#x22;a54Tg&#x22;,
+        &#x22;typeName&#x22;: &#x22;shape&#x22;
+      },
+      &#x22;binding:3PkZfYUOnW6b2Lr9uZdPE&#x22;: {
+        &#x22;meta&#x22;: {},
+        &#x22;id&#x22;: &#x22;binding:3PkZfYUOnW6b2Lr9uZdPE&#x22;,
+        &#x22;type&#x22;: &#x22;arrow&#x22;,
+        &#x22;fromId&#x22;: &#x22;shape:CwgwrGwBkWU2__Ngz07Kd&#x22;,
+        &#x22;toId&#x22;: &#x22;shape:Hgv24LHI3B54JG4Gfc4bi&#x22;,
+        &#x22;props&#x22;: {
+          &#x22;isPrecise&#x22;: true,
+          &#x22;isExact&#x22;: false,
+          &#x22;normalizedAnchor&#x22;: {
+            &#x22;x&#x22;: 0.5,
+            &#x22;y&#x22;: 0.5
+          },
+          &#x22;snap&#x22;: &#x22;center&#x22;,
+          &#x22;terminal&#x22;: &#x22;start&#x22;
+        },
+        &#x22;typeName&#x22;: &#x22;binding&#x22;
+      },
+      &#x22;shape:mzWJdaZv6H7d82CrlcrwG&#x22;: {
+        &#x22;x&#x22;: 654.6037506874699,
+        &#x22;y&#x22;: 115.99583396288423,
+        &#x22;rotation&#x22;: 4.694935687864747,
+        &#x22;isLocked&#x22;: false,
+        &#x22;opacity&#x22;: 1,
+        &#x22;meta&#x22;: {},
+        &#x22;id&#x22;: &#x22;shape:mzWJdaZv6H7d82CrlcrwG&#x22;,
+        &#x22;type&#x22;: &#x22;geo&#x22;,
+        &#x22;props&#x22;: {
+          &#x22;w&#x22;: 302.67782466291345,
+          &#x22;h&#x22;: 61.69791793823242,
+          &#x22;geo&#x22;: &#x22;rectangle&#x22;,
+          &#x22;dash&#x22;: &#x22;solid&#x22;,
+          &#x22;growY&#x22;: 0,
+          &#x22;url&#x22;: &#x22;&#x22;,
+          &#x22;scale&#x22;: 1,
+          &#x22;color&#x22;: &#x22;black&#x22;,
+          &#x22;labelColor&#x22;: &#x22;black&#x22;,
+          &#x22;fill&#x22;: &#x22;none&#x22;,
+          &#x22;size&#x22;: &#x22;m&#x22;,
+          &#x22;font&#x22;: &#x22;sans&#x22;,
+          &#x22;align&#x22;: &#x22;middle&#x22;,
+          &#x22;verticalAlign&#x22;: &#x22;end&#x22;,
+          &#x22;richText&#x22;: {
+            &#x22;type&#x22;: &#x22;doc&#x22;,
+            &#x22;content&#x22;: [
+              {
+                &#x22;type&#x22;: &#x22;paragraph&#x22;,
+                &#x22;attrs&#x22;: {
+                  &#x22;dir&#x22;: &#x22;auto&#x22;
+                },
+                &#x22;content&#x22;: [
+                  {
+                    &#x22;type&#x22;: &#x22;text&#x22;,
+                    &#x22;text&#x22;: &#x22;Annotation&#x22;
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        &#x22;parentId&#x22;: &#x22;page:page&#x22;,
+        &#x22;index&#x22;: &#x22;aJ2UR&#x22;,
+        &#x22;typeName&#x22;: &#x22;shape&#x22;
+      },
+      &#x22;shape:LyVk6lT679DuB2kU6vFJv&#x22;: {
+        &#x22;x&#x22;: 307.9581711577491,
+        &#x22;y&#x22;: -113.59179909739328,
+        &#x22;rotation&#x22;: 0,
+        &#x22;isLocked&#x22;: false,
+        &#x22;opacity&#x22;: 1,
+        &#x22;meta&#x22;: {},
+        &#x22;id&#x22;: &#x22;shape:LyVk6lT679DuB2kU6vFJv&#x22;,
+        &#x22;type&#x22;: &#x22;arrow&#x22;,
+        &#x22;props&#x22;: {
+          &#x22;kind&#x22;: &#x22;arc&#x22;,
+          &#x22;elbowMidPoint&#x22;: 0.5,
+          &#x22;dash&#x22;: &#x22;solid&#x22;,
+          &#x22;size&#x22;: &#x22;m&#x22;,
+          &#x22;fill&#x22;: &#x22;none&#x22;,
+          &#x22;color&#x22;: &#x22;black&#x22;,
+          &#x22;labelColor&#x22;: &#x22;black&#x22;,
+          &#x22;bend&#x22;: 0,
+          &#x22;start&#x22;: {
+            &#x22;x&#x22;: 0,
+            &#x22;y&#x22;: 0
+          },
+          &#x22;end&#x22;: {
+            &#x22;x&#x22;: 176.9935780647022,
+            &#x22;y&#x22;: -0.6604289877907661
+          },
+          &#x22;arrowheadStart&#x22;: &#x22;none&#x22;,
+          &#x22;arrowheadEnd&#x22;: &#x22;arrow&#x22;,
+          &#x22;text&#x22;: &#x22;&#x22;,
+          &#x22;labelPosition&#x22;: 0.5,
+          &#x22;font&#x22;: &#x22;sans&#x22;,
+          &#x22;scale&#x22;: 1
+        },
+        &#x22;parentId&#x22;: &#x22;page:page&#x22;,
+        &#x22;index&#x22;: &#x22;aD6ad&#x22;,
+        &#x22;typeName&#x22;: &#x22;shape&#x22;
+      },
+      &#x22;shape:65vWZQAsUonEAsql9ip1d&#x22;: {
+        &#x22;x&#x22;: -190.60711912565088,
+        &#x22;y&#x22;: -114.88419112091177,
+        &#x22;rotation&#x22;: 0,
+        &#x22;isLocked&#x22;: false,
+        &#x22;opacity&#x22;: 1,
+        &#x22;meta&#x22;: {},
+        &#x22;id&#x22;: &#x22;shape:65vWZQAsUonEAsql9ip1d&#x22;,
+        &#x22;type&#x22;: &#x22;text&#x22;,
+        &#x22;props&#x22;: {
+          &#x22;color&#x22;: &#x22;black&#x22;,
+          &#x22;size&#x22;: &#x22;m&#x22;,
+          &#x22;w&#x22;: 179.8541717529297,
+          &#x22;font&#x22;: &#x22;sans&#x22;,
+          &#x22;textAlign&#x22;: &#x22;start&#x22;,
+          &#x22;autoSize&#x22;: true,
+          &#x22;scale&#x22;: 1,
+          &#x22;richText&#x22;: {
+            &#x22;type&#x22;: &#x22;doc&#x22;,
+            &#x22;content&#x22;: [
+              {
+                &#x22;type&#x22;: &#x22;paragraph&#x22;,
+                &#x22;attrs&#x22;: {
+                  &#x22;dir&#x22;: &#x22;auto&#x22;
+                },
+                &#x22;content&#x22;: [
+                  {
+                    &#x22;type&#x22;: &#x22;text&#x22;,
+                    &#x22;text&#x22;: &#x22;Data Collection &#x22;
+                  }
+                ]
+              },
+              {
+                &#x22;type&#x22;: &#x22;paragraph&#x22;,
+                &#x22;attrs&#x22;: {
+                  &#x22;dir&#x22;: &#x22;auto&#x22;
+                },
+                &#x22;content&#x22;: [
+                  {
+                    &#x22;type&#x22;: &#x22;text&#x22;,
+                    &#x22;text&#x22;: &#x22;&#x26; Preprocessing&#x22;
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        &#x22;parentId&#x22;: &#x22;page:page&#x22;,
+        &#x22;index&#x22;: &#x22;a85Qa&#x22;,
+        &#x22;typeName&#x22;: &#x22;shape&#x22;
+      },
+      &#x22;shape:Hgv24LHI3B54JG4Gfc4bi&#x22;: {
+        &#x22;x&#x22;: 526.7728636666596,
+        &#x22;y&#x22;: 117.5215548556294,
+        &#x22;rotation&#x22;: 4.71238898038469,
+        &#x22;isLocked&#x22;: false,
+        &#x22;opacity&#x22;: 1,
+        &#x22;meta&#x22;: {},
+        &#x22;id&#x22;: &#x22;shape:Hgv24LHI3B54JG4Gfc4bi&#x22;,
+        &#x22;type&#x22;: &#x22;geo&#x22;,
+        &#x22;props&#x22;: {
+          &#x22;w&#x22;: 302.67782466291345,
+          &#x22;h&#x22;: 61.69791793823242,
+          &#x22;geo&#x22;: &#x22;rectangle&#x22;,
+          &#x22;dash&#x22;: &#x22;solid&#x22;,
+          &#x22;growY&#x22;: 0,
+          &#x22;url&#x22;: &#x22;&#x22;,
+          &#x22;scale&#x22;: 1,
+          &#x22;color&#x22;: &#x22;black&#x22;,
+          &#x22;labelColor&#x22;: &#x22;black&#x22;,
+          &#x22;fill&#x22;: &#x22;none&#x22;,
+          &#x22;size&#x22;: &#x22;m&#x22;,
+          &#x22;font&#x22;: &#x22;sans&#x22;,
+          &#x22;align&#x22;: &#x22;middle&#x22;,
+          &#x22;verticalAlign&#x22;: &#x22;end&#x22;,
+          &#x22;richText&#x22;: {
+            &#x22;type&#x22;: &#x22;doc&#x22;,
+            &#x22;content&#x22;: [
+              {
+                &#x22;type&#x22;: &#x22;paragraph&#x22;,
+                &#x22;attrs&#x22;: {
+                  &#x22;dir&#x22;: &#x22;auto&#x22;
+                },
+                &#x22;content&#x22;: [
+                  {
+                    &#x22;type&#x22;: &#x22;text&#x22;,
+                    &#x22;text&#x22;: &#x22;Preprocessing&#x22;
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        &#x22;parentId&#x22;: &#x22;page:page&#x22;,
+        &#x22;index&#x22;: &#x22;aHAvC&#x22;,
+        &#x22;typeName&#x22;: &#x22;shape&#x22;
+      },
+      &#x22;shape:b94qdQSvwuRe2iaqKkeHN&#x22;: {
+        &#x22;x&#x22;: 96.0031337293118,
+        &#x22;y&#x22;: -87.6783088261667,
+        &#x22;rotation&#x22;: 0,
+        &#x22;isLocked&#x22;: false,
+        &#x22;opacity&#x22;: 1,
+        &#x22;meta&#x22;: {},
+        &#x22;id&#x22;: &#x22;shape:b94qdQSvwuRe2iaqKkeHN&#x22;,
+        &#x22;type&#x22;: &#x22;text&#x22;,
+        &#x22;props&#x22;: {
+          &#x22;color&#x22;: &#x22;black&#x22;,
+          &#x22;size&#x22;: &#x22;m&#x22;,
+          &#x22;w&#x22;: 185.4166717529297,
+          &#x22;font&#x22;: &#x22;sans&#x22;,
+          &#x22;textAlign&#x22;: &#x22;start&#x22;,
+          &#x22;autoSize&#x22;: true,
+          &#x22;scale&#x22;: 1,
+          &#x22;richText&#x22;: {
+            &#x22;type&#x22;: &#x22;doc&#x22;,
+            &#x22;content&#x22;: [
+              {
+                &#x22;type&#x22;: &#x22;paragraph&#x22;,
+                &#x22;attrs&#x22;: {
+                  &#x22;dir&#x22;: &#x22;auto&#x22;
+                },
+                &#x22;content&#x22;: [
+                  {
+                    &#x22;type&#x22;: &#x22;text&#x22;,
+                    &#x22;text&#x22;: &#x22;160 FOV Camera&#x22;
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        &#x22;parentId&#x22;: &#x22;page:page&#x22;,
+        &#x22;index&#x22;: &#x22;aC53X&#x22;,
+        &#x22;typeName&#x22;: &#x22;shape&#x22;
+      },
+      &#x22;shape:nu6X8OYTpYtDTkjoFXdfv&#x22;: {
+        &#x22;x&#x22;: -216.87966949049397,
+        &#x22;y&#x22;: 285.94793519972063,
+        &#x22;rotation&#x22;: 0,
+        &#x22;isLocked&#x22;: false,
+        &#x22;opacity&#x22;: 1,
+        &#x22;meta&#x22;: {},
+        &#x22;id&#x22;: &#x22;shape:nu6X8OYTpYtDTkjoFXdfv&#x22;,
+        &#x22;type&#x22;: &#x22;text&#x22;,
+        &#x22;props&#x22;: {
+          &#x22;color&#x22;: &#x22;black&#x22;,
+          &#x22;size&#x22;: &#x22;m&#x22;,
+          &#x22;w&#x22;: 245.6875,
+          &#x22;font&#x22;: &#x22;sans&#x22;,
+          &#x22;textAlign&#x22;: &#x22;start&#x22;,
+          &#x22;autoSize&#x22;: true,
+          &#x22;scale&#x22;: 1,
+          &#x22;richText&#x22;: {
+            &#x22;type&#x22;: &#x22;doc&#x22;,
+            &#x22;content&#x22;: [
+              {
+                &#x22;type&#x22;: &#x22;paragraph&#x22;,
+                &#x22;attrs&#x22;: {
+                  &#x22;dir&#x22;: &#x22;auto&#x22;
+                },
+                &#x22;content&#x22;: [
+                  {
+                    &#x22;type&#x22;: &#x22;text&#x22;,
+                    &#x22;text&#x22;: &#x22;Training, quantization&#x22;
+                  }
+                ]
+              },
+              {
+                &#x22;type&#x22;: &#x22;paragraph&#x22;,
+                &#x22;attrs&#x22;: {
+                  &#x22;dir&#x22;: &#x22;auto&#x22;
+                },
+                &#x22;content&#x22;: [
+                  {
+                    &#x22;type&#x22;: &#x22;text&#x22;,
+                    &#x22;text&#x22;: &#x22;and inference pipeline&#x22;
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        &#x22;parentId&#x22;: &#x22;page:page&#x22;,
+        &#x22;index&#x22;: &#x22;a9Bpg&#x22;,
+        &#x22;typeName&#x22;: &#x22;shape&#x22;
+      },
+      &#x22;page:page&#x22;: {
+        &#x22;meta&#x22;: {},
+        &#x22;id&#x22;: &#x22;page:page&#x22;,
+        &#x22;name&#x22;: &#x22;Page 1&#x22;,
+        &#x22;index&#x22;: &#x22;a1&#x22;,
+        &#x22;typeName&#x22;: &#x22;page&#x22;
+      },
+      &#x22;document:document&#x22;: {
+        &#x22;gridSize&#x22;: 10,
+        &#x22;name&#x22;: &#x22;&#x22;,
+        &#x22;meta&#x22;: {},
+        &#x22;id&#x22;: &#x22;document:document&#x22;,
+        &#x22;typeName&#x22;: &#x22;document&#x22;
+      },
+      &#x22;shape:DtoGbf98Fw1YOHg2_-QPH&#x22;: {
+        &#x22;x&#x22;: 176.86794121997127,
+        &#x22;y&#x22;: -164.31461667016006,
+        &#x22;rotation&#x22;: 0,
+        &#x22;isLocked&#x22;: false,
+        &#x22;opacity&#x22;: 1,
+        &#x22;meta&#x22;: {},
+        &#x22;id&#x22;: &#x22;shape:DtoGbf98Fw1YOHg2_-QPH&#x22;,
+        &#x22;type&#x22;: &#x22;image&#x22;,
+        &#x22;props&#x22;: {
+          &#x22;w&#x22;: 64,
+          &#x22;h&#x22;: 64,
+          &#x22;assetId&#x22;: &#x22;asset:-1800455973&#x22;,
+          &#x22;playing&#x22;: true,
+          &#x22;url&#x22;: &#x22;&#x22;,
+          &#x22;crop&#x22;: null,
+          &#x22;flipX&#x22;: false,
+          &#x22;flipY&#x22;: false,
+          &#x22;altText&#x22;: &#x22;&#x22;
+        },
+        &#x22;parentId&#x22;: &#x22;page:page&#x22;,
+        &#x22;index&#x22;: &#x22;aB7P7&#x22;,
+        &#x22;typeName&#x22;: &#x22;shape&#x22;
+      },
+      &#x22;shape:xqzH_ARzm7PerGlAVShSV&#x22;: {
+        &#x22;x&#x22;: 311.28536521516196,
+        &#x22;y&#x22;: 318.6211916898594,
+        &#x22;rotation&#x22;: 0,
+        &#x22;isLocked&#x22;: false,
+        &#x22;opacity&#x22;: 1,
+        &#x22;meta&#x22;: {},
+        &#x22;id&#x22;: &#x22;shape:xqzH_ARzm7PerGlAVShSV&#x22;,
+        &#x22;type&#x22;: &#x22;arrow&#x22;,
+        &#x22;props&#x22;: {
+          &#x22;kind&#x22;: &#x22;arc&#x22;,
+          &#x22;elbowMidPoint&#x22;: 0.5,
+          &#x22;dash&#x22;: &#x22;solid&#x22;,
+          &#x22;size&#x22;: &#x22;m&#x22;,
+          &#x22;fill&#x22;: &#x22;none&#x22;,
+          &#x22;color&#x22;: &#x22;black&#x22;,
+          &#x22;labelColor&#x22;: &#x22;black&#x22;,
+          &#x22;bend&#x22;: 0,
+          &#x22;start&#x22;: {
+            &#x22;x&#x22;: 0,
+            &#x22;y&#x22;: 0
+          },
+          &#x22;end&#x22;: {
+            &#x22;x&#x22;: 139.05622725179978,
+            &#x22;y&#x22;: 3.1100642237421425
+          },
+          &#x22;arrowheadStart&#x22;: &#x22;none&#x22;,
+          &#x22;arrowheadEnd&#x22;: &#x22;arrow&#x22;,
+          &#x22;text&#x22;: &#x22;&#x22;,
+          &#x22;labelPosition&#x22;: 0.5,
+          &#x22;font&#x22;: &#x22;sans&#x22;,
+          &#x22;scale&#x22;: 1
+        },
+        &#x22;parentId&#x22;: &#x22;page:page&#x22;,
+        &#x22;index&#x22;: &#x22;aMAOb&#x22;,
+        &#x22;typeName&#x22;: &#x22;shape&#x22;
+      },
+      &#x22;shape:CwgwrGwBkWU2__Ngz07Kd&#x22;: {
+        &#x22;x&#x22;: 605.0588796284308,
+        &#x22;y&#x22;: -26.519985053464126,
+        &#x22;rotation&#x22;: 0,
+        &#x22;isLocked&#x22;: false,
+        &#x22;opacity&#x22;: 1,
+        &#x22;meta&#x22;: {},
+        &#x22;id&#x22;: &#x22;shape:CwgwrGwBkWU2__Ngz07Kd&#x22;,
+        &#x22;type&#x22;: &#x22;arrow&#x22;,
+        &#x22;props&#x22;: {
+          &#x22;kind&#x22;: &#x22;arc&#x22;,
+          &#x22;elbowMidPoint&#x22;: 0.5,
+          &#x22;dash&#x22;: &#x22;solid&#x22;,
+          &#x22;size&#x22;: &#x22;m&#x22;,
+          &#x22;fill&#x22;: &#x22;none&#x22;,
+          &#x22;color&#x22;: &#x22;black&#x22;,
+          &#x22;labelColor&#x22;: &#x22;black&#x22;,
+          &#x22;bend&#x22;: 0,
+          &#x22;start&#x22;: {
+            &#x22;x&#x22;: -16.32847850773328,
+            &#x22;y&#x22;: 6.123195012450594
+          },
+          &#x22;end&#x22;: {
+            &#x22;x&#x22;: 46.2640016758437,
+            &#x22;y&#x22;: -6.12317944039998
+          },
+          &#x22;arrowheadStart&#x22;: &#x22;none&#x22;,
+          &#x22;arrowheadEnd&#x22;: &#x22;arrow&#x22;,
+          &#x22;text&#x22;: &#x22;&#x22;,
+          &#x22;labelPosition&#x22;: 0.5,
+          &#x22;font&#x22;: &#x22;sans&#x22;,
+          &#x22;scale&#x22;: 1
+        },
+        &#x22;parentId&#x22;: &#x22;page:page&#x22;,
+        &#x22;index&#x22;: &#x22;aK1YQ&#x22;,
+        &#x22;typeName&#x22;: &#x22;shape&#x22;
+      },
+      &#x22;binding:fyCezB3iElxsUeG50J0b3&#x22;: {
+        &#x22;meta&#x22;: {},
+        &#x22;id&#x22;: &#x22;binding:fyCezB3iElxsUeG50J0b3&#x22;,
+        &#x22;type&#x22;: &#x22;arrow&#x22;,
+        &#x22;fromId&#x22;: &#x22;shape:CwgwrGwBkWU2__Ngz07Kd&#x22;,
+        &#x22;toId&#x22;: &#x22;shape:mzWJdaZv6H7d82CrlcrwG&#x22;,
+        &#x22;props&#x22;: {
+          &#x22;isPrecise&#x22;: true,
+          &#x22;isExact&#x22;: false,
+          &#x22;normalizedAnchor&#x22;: {
+            &#x22;x&#x22;: 0.4999999999999999,
+            &#x22;y&#x22;: 0.5
+          },
+          &#x22;snap&#x22;: &#x22;center&#x22;,
+          &#x22;terminal&#x22;: &#x22;end&#x22;
+        },
+        &#x22;typeName&#x22;: &#x22;binding&#x22;
+      }
+    },
+    &#x22;schema&#x22;: {
+      &#x22;schemaVersion&#x22;: 2,
+      &#x22;sequences&#x22;: {
+        &#x22;com.tldraw.store&#x22;: 4,
+        &#x22;com.tldraw.asset&#x22;: 1,
+        &#x22;com.tldraw.camera&#x22;: 1,
+        &#x22;com.tldraw.document&#x22;: 2,
+        &#x22;com.tldraw.instance&#x22;: 25,
+        &#x22;com.tldraw.instance_page_state&#x22;: 5,
+        &#x22;com.tldraw.page&#x22;: 1,
+        &#x22;com.tldraw.instance_presence&#x22;: 6,
+        &#x22;com.tldraw.pointer&#x22;: 1,
+        &#x22;com.tldraw.shape&#x22;: 4,
+        &#x22;com.tldraw.asset.bookmark&#x22;: 2,
+        &#x22;com.tldraw.asset.image&#x22;: 5,
+        &#x22;com.tldraw.asset.video&#x22;: 5,
+        &#x22;com.tldraw.shape.group&#x22;: 0,
+        &#x22;com.tldraw.shape.text&#x22;: 3,
+        &#x22;com.tldraw.shape.bookmark&#x22;: 2,
+        &#x22;com.tldraw.shape.draw&#x22;: 2,
+        &#x22;com.tldraw.shape.geo&#x22;: 10,
+        &#x22;com.tldraw.shape.note&#x22;: 9,
+        &#x22;com.tldraw.shape.line&#x22;: 5,
+        &#x22;com.tldraw.shape.frame&#x22;: 1,
+        &#x22;com.tldraw.shape.arrow&#x22;: 6,
+        &#x22;com.tldraw.shape.highlight&#x22;: 1,
+        &#x22;com.tldraw.shape.embed&#x22;: 4,
+        &#x22;com.tldraw.shape.image&#x22;: 5,
+        &#x22;com.tldraw.shape.video&#x22;: 4,
+        &#x22;com.tldraw.binding.arrow&#x22;: 1
+      }
+    }
+  },
+  &#x22;session&#x22;: {
+    &#x22;version&#x22;: 0,
+    &#x22;currentPageId&#x22;: &#x22;page:page&#x22;,
+    &#x22;exportBackground&#x22;: true,
+    &#x22;isFocusMode&#x22;: false,
+    &#x22;isDebugMode&#x22;: false,
+    &#x22;isToolLocked&#x22;: false,
+    &#x22;isGridMode&#x22;: false,
+    &#x22;pageStates&#x22;: [
+      {
+        &#x22;pageId&#x22;: &#x22;page:page&#x22;,
+        &#x22;camera&#x22;: {
+          &#x22;x&#x22;: 336.8489084463951,
+          &#x22;y&#x22;: 337.5242212306331,
+          &#x22;z&#x22;: 0.48402470117659874
+        },
+        &#x22;selectedShapeIds&#x22;: [],
+        &#x22;focusedGroupId&#x22;: null
+      }
+    ]
+  }
+}" data-tldraw-height="600" data-tldraw-interactive="false" data-tldraw-class="" style="height: 600px; width: 100%;"></div> </div>  </main> <script type="module">var p={inline:["$","$"],display:["$$","$$"]};function c(a,t){t===void 0&&(t=p);for(var o=a.querySelectorAll(".katex-mathml + .katex-html"),n=0;n<o.length;n++){var r=o[n];r.remove?r.remove():r.parentNode&&r.parentNode.removeChild(r)}for(var d=a.querySelectorAll(".katex-mathml"),i=0;i<d.length;i++){var l=d[i],e=l.querySelector("annotation");e&&(l.replaceWith?l.replaceWith(e):l.parentNode&&l.parentNode.replaceChild(e,l),e.innerHTML=t.inline[0]+e.innerHTML+t.inline[1])}for(var f=a.querySelectorAll(".katex-display annotation"),v=0;v<f.length;v++){var s=f[v];s.innerHTML=t.display[0]+s.innerHTML.substr(t.inline[0].length,s.innerHTML.length-t.inline[0].length-t.inline[1].length)+t.display[1]}return a}function h(a){var t=a instanceof Element?a:a.parentElement;return t&&t.closest(".katex")}document.addEventListener("copy",function(a){var t=window.getSelection();if(!(t.isCollapsed||!a.clipboardData)){var o=a.clipboardData,n=t.getRangeAt(0),r=h(n.startContainer);r&&n.setStartBefore(r);var d=h(n.endContainer);d&&n.setEndAfter(d);var i=n.cloneContents();if(i.querySelector(".katex-mathml")){var l=Array.prototype.map.call(i.childNodes,e=>e instanceof Text?e.textContent:e.outerHTML).join("");o.setData("text/html",l),o.setData("text/plain",c(i).textContent),a.preventDefault()}}});</script> </body> </html>
